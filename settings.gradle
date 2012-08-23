@@ -1,0 +1,3 @@
+rootProject.name = 'spring-test-mvc-htmlunit'
+
+include 'mail-webapp'

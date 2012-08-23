@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+  <head>
+    <title>Messages : Create</title>
+    <link rel="stylesheet" th:href="@{/resources/css/bootstrap.min.css}" href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css"><!-- --></link>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Messages : Create</h1>
+      <form id="messageForm" th:action="@{/messages/(form=1)}" th:object="${message}" action="#" method="post">
+        <div th:if="${#fields.hasErrors('*')}" class="alert alert-error">
+          <p th:each="error : ${#fields.errors('*')}" th:text="${error}">Validation error</p>
+        </div>
+        <div class="pull-right"><a th:href="@{/messages/}" href="messages.html">Messages</a></div>
+        <label for="summary">Summary</label>
+        <input type="text" th:field="*{summary}" class="required"/>
+        <label for="text">Message</label>
+        <textarea th:field="*{text}" th:class="${#fields.hasErrors('text')} ? 'field-error'"></textarea>
+        <div class="form-actions">
+          <input type="submit" value="Create"/>
+        </div>
+      </form>
+    </div>
+    <script th:src="@{/resources/js/jquery-1.7.2.js}" src="http://code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript" th:src="@{/resources/js/jquery.validate.js}" src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>
+    <script type="text/javascript">
+    //<![CDATA[
+      $(document).ready(function(){
+        $("#messageForm").validate();
+      });
+    //]]>
+    </script>
+  </body>
+</html>
