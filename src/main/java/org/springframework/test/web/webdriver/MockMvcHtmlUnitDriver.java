@@ -15,8 +15,8 @@ package org.springframework.test.web.webdriver;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.test.web.htmlunit.MockMvcWebConnection;
-import org.springframework.test.web.server.MockMvc;
-import org.springframework.test.web.server.setup.MockMvcBuilders;
+import org.springframework.test.web.mock.servlet.MockMvc;
+import org.springframework.test.web.mock.servlet.setup.MockMvcBuilders;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -111,7 +111,7 @@ public final class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
 
 	private void setWebContext(WebApplicationContext webContext) {
 		Assert.notNull(webContext, "webContext cannot be null");
-		MockMvc mockMvc = MockMvcBuilders.webApplicationContextSetup(webContext).build();
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webContext).build();
 		setMockMvc(mockMvc);
 	}
 
