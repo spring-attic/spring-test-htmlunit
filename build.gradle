@@ -3,219 +3,219 @@ ext.seleniumVersion = '2.25.0'
 ext.springVersion = '3.1.2.RELEASE'
 
 configure(allprojects) {
-	apply plugin: 'java'
-	apply plugin: 'eclipse-wtp'
-	apply plugin: 'idea'
+  apply plugin: 'java'
+  apply plugin: 'eclipse-wtp'
+  apply plugin: 'idea'
 
-	apply from: "${rootProject.projectDir}/publish-maven.gradle"
+  apply from: "${rootProject.projectDir}/publish-maven.gradle"
 
-	group = 'org.springframework'
+  group = 'org.springframework'
 
-	sourceCompatibility=1.6
-	targetCompatibility=1.6
+  sourceCompatibility=1.6
+  targetCompatibility=1.6
 
-	[compileJava, compileTestJava]*.options*.compilerArgs = ['-Xlint:none']
+  [compileJava, compileTestJava]*.options*.compilerArgs = ['-Xlint:none']
 
-	test.systemProperty("java.awt.headless", "true")
+  test.systemProperty("java.awt.headless", "true")
 
-	repositories {
-		maven { url "http://repo.springsource.org/libs-milestone" }
-		mavenCentral()
-	}
+  repositories {
+    maven { url "http://repo.springsource.org/libs-milestone" }
+    mavenCentral()
+  }
 
-	configurations.all {
-		resolutionStrategy {
-			['asm','aop','beans','core','web','context','webmvc','context-support'].each {
-				force  "org.springframework:spring-$it:$springVersion"
-			}
-			force "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final"
-		}
-	}
+  configurations.all {
+    resolutionStrategy {
+      ['asm','aop','beans','core','web','context','webmvc','context-support'].each {
+        force  "org.springframework:spring-$it:$springVersion"
+      }
+      force "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final"
+    }
+  }
 
-	// servlet-api (2.5) and tomcat-servlet-api (3.0) classpath entries should not be
-	// exported to dependent projects in Eclipse to avoid false compilation errors due
-	// to changing APIs across these versions
-	eclipse.classpath.file.whenMerged { classpath ->
-		classpath.entries.findAll { entry -> entry.path.contains('servlet-api') }*.exported = false
-	}
+  // servlet-api (2.5) and tomcat-servlet-api (3.0) classpath entries should not be
+  // exported to dependent projects in Eclipse to avoid false compilation errors due
+  // to changing APIs across these versions
+  eclipse.classpath.file.whenMerged { classpath ->
+    classpath.entries.findAll { entry -> entry.path.contains('servlet-api') }*.exported = false
+  }
 }
 
 configure(allprojects) { subproject ->
-	jar {
-		manifest.attributes['Implementation-Title'] = subproject.name
-		manifest.attributes['Implementation-Version'] = subproject.version
-	}
+  jar {
+    manifest.attributes['Implementation-Title'] = subproject.name
+    manifest.attributes['Implementation-Version'] = subproject.version
+  }
 
-	javadoc {
-		options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
-		options.author = true
-		options.header = project.name
-	}
+  javadoc {
+    options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+    options.author = true
+    options.header = project.name
+  }
 
-	task sourcesJar(type: Jar, dependsOn:classes) {
-		classifier = 'sources'
-		from sourceSets.main.allJava
-	}
+  task sourcesJar(type: Jar, dependsOn:classes) {
+    classifier = 'sources'
+    from sourceSets.main.allJava
+  }
 
-	task javadocJar(type: Jar) {
-		classifier = 'javadoc'
-		from javadoc
-	}
+  task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+  }
 
-	artifacts {
-		archives sourcesJar
-		archives javadocJar
-	}
+  artifacts {
+    archives sourcesJar
+    archives javadocJar
+  }
 
-	task listDependencies {
-		doLast {
-			println project.name
-			configurations.runtime.collect { "    $it.name" }.sort().each { println it }
-		}
-	}
+  task listDependencies {
+    doLast {
+      println project.name
+      configurations.runtime.collect { "    $it.name" }.sort().each { println it }
+    }
+  }
 }
 
 project("mail-webapp") {
-	apply plugin: 'groovy'
-	apply plugin: 'war'
-	apply plugin: 'jetty'
+  apply plugin: 'groovy'
+  apply plugin: 'war'
+  apply plugin: 'jetty'
 
-	description = 'Spring Test MVC HtmlUnit Sample'
+  description = 'Spring Test MVC HtmlUnit Sample'
 
-	configurations.archives.artifacts.clear()
+  configurations.archives.artifacts.clear()
 
-	dependencies {
-		groovy 'org.codehaus.groovy:groovy:1.8.7'
+  dependencies {
+    groovy 'org.codehaus.groovy:groovy:1.8.7'
 
-		compile "org.springframework:spring-context:$springVersion",
-				"org.springframework:spring-webmvc:$springVersion",
-				"org.springframework.data:spring-data-jpa:1.1.1.RELEASE",
-				"org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final",
-				"org.hibernate:hibernate-entitymanager:4.1.4.Final",
-				"org.hibernate:hibernate-validator:4.1.0.Final",
-				"org.aspectj:aspectjrt:1.6.10",
-				"javax.validation:validation-api:1.0.0.GA",
-				"org.slf4j:slf4j-log4j12:1.6.1",
-				"org.hsqldb:hsqldb:2.2.8",
-				"org.thymeleaf:thymeleaf:2.0.12",
-				"org.thymeleaf:thymeleaf-spring3:2.0.12"
+    compile "org.springframework:spring-context:$springVersion",
+        "org.springframework:spring-webmvc:$springVersion",
+        "org.springframework.data:spring-data-jpa:1.1.1.RELEASE",
+        "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final",
+        "org.hibernate:hibernate-entitymanager:4.1.4.Final",
+        "org.hibernate:hibernate-validator:4.1.0.Final",
+        "org.aspectj:aspectjrt:1.6.10",
+        "javax.validation:validation-api:1.0.0.GA",
+        "org.slf4j:slf4j-log4j12:1.6.1",
+        "org.hsqldb:hsqldb:2.2.8",
+        "org.thymeleaf:thymeleaf:2.0.12",
+        "org.thymeleaf:thymeleaf-spring3:2.0.12"
 
-		testCompile rootProject,
-			"org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion",
-			"org.seleniumhq.selenium:selenium-support:$seleniumVersion",
-			'org.codehaus.geb:geb-spock:0.7.1',
-			'org.spockframework:spock-core:0.6-groovy-1.8',
-			'org.spockframework:spock-spring:0.6-groovy-1.8',
-			"junit:junit:$junitVersion",
-			'org.easytesting:fest-assert:1.4',
-			"org.mockito:mockito-all:1.9.0"
-	}
+    testCompile rootProject,
+      "org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion",
+      "org.seleniumhq.selenium:selenium-support:$seleniumVersion",
+      'org.codehaus.geb:geb-spock:0.7.1',
+      'org.spockframework:spock-core:0.6-groovy-1.8',
+      'org.spockframework:spock-spring:0.6-groovy-1.8',
+      "junit:junit:$junitVersion",
+      'org.easytesting:fest-assert:1.4',
+      "org.mockito:mockito-all:1.9.0"
+  }
 
-	eclipse.wtp.component.contextPath = '/mail'
-	[jettyRunWar, jettyRun]*.contextPath = 'mail'
+  eclipse.wtp.component.contextPath = '/mail'
+  [jettyRunWar, jettyRun]*.contextPath = 'mail'
 
-	test {
-		doFirst {
-			project.stopPort = 9876
-			project.stopKey = 'stop'
-			jettyRun.daemon = true
-			jettyRun.execute()
-		}
-		doLast {
-			jettyStop.execute()
-		}
-	}
+  test {
+    doFirst {
+      project.stopPort = 9876
+      project.stopKey = 'stop'
+      jettyRun.daemon = true
+      jettyRun.execute()
+    }
+    doLast {
+      jettyStop.execute()
+    }
+  }
 
-	test.dependsOn war
+  test.dependsOn war
 }
 
 configure(rootProject) {
-	description = 'Provides integration between spring-test-mvc and htmlunit'
+  description = 'Provides integration between spring-test-mvc and htmlunit'
 
-	dependencies {
-		compile "org.springframework:spring-test:$springVersion",
-				"org.springframework:spring-test-mvc:1.0.0.M1",
-				"net.sourceforge.htmlunit:htmlunit:2.10"
-		compile("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion",optional)
-		compile('javax.servlet:servlet-api:2.5',provided)
+  dependencies {
+    compile "org.springframework:spring-test:$springVersion",
+        "org.springframework:spring-test-mvc:1.0.0.M1",
+        "net.sourceforge.htmlunit:htmlunit:2.10"
+    compile("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion",optional)
+    compile('javax.servlet:servlet-api:2.5',provided)
 
-		testCompile 'org.easytesting:fest-assert:1.4',
-					"junit:junit:$junitVersion"
+    testCompile 'org.easytesting:fest-assert:1.4',
+          "junit:junit:$junitVersion"
 
-	}
+  }
 
-	task api(type: Javadoc) {
-		group = 'Documentation'
-		description = 'Generates aggregated Javadoc API documentation.'
-		title = "${rootProject.description} ${version} API"
-		options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
-		options.author = true
-		options.header = rootProject.description
-		options.links(
-			'http://docs.jboss.org/jbossas/javadoc/4.0.5/connector'
-		)
-		source subprojects.collect { project ->
-			project.sourceSets.main.allJava
-		}
-		destinationDir = new File(buildDir, "api")
-		classpath = files(subprojects.collect { project ->
-			project.sourceSets.main.compileClasspath
-		})
-		maxMemory = '1024m'
-	}
+  task api(type: Javadoc) {
+    group = 'Documentation'
+    description = 'Generates aggregated Javadoc API documentation.'
+    title = "${rootProject.description} ${version} API"
+    options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+    options.author = true
+    options.header = rootProject.description
+    options.links(
+      'http://docs.jboss.org/jbossas/javadoc/4.0.5/connector'
+    )
+    source subprojects.collect { project ->
+      project.sourceSets.main.allJava
+    }
+    destinationDir = new File(buildDir, "api")
+    classpath = files(subprojects.collect { project ->
+      project.sourceSets.main.compileClasspath
+    })
+    maxMemory = '1024m'
+  }
 
-	task docsZip(type: Zip) {
-		group = 'Distribution'
-		classifier = 'docs'
-		description = "Builds -${classifier} archive containing api and reference " +
-			"for deployment at static.springframework.org/spring-framework/docs."
+  task docsZip(type: Zip) {
+    group = 'Distribution'
+    classifier = 'docs'
+    description = "Builds -${classifier} archive containing api and reference " +
+      "for deployment at static.springframework.org/spring-framework/docs."
 
-		from (api) {
-			into 'api'
-		}
-	}
+    from (api) {
+      into 'api'
+    }
+  }
 
-	task distZip(type: Zip, dependsOn: [docsZip]) {
-		group = 'Distribution'
-		classifier = 'dist'
-		description = "Builds -${classifier} archive, containing all jars and docs, " +
-					"suitable for community download page."
+  task distZip(type: Zip, dependsOn: [docsZip]) {
+    group = 'Distribution'
+    classifier = 'dist'
+    description = "Builds -${classifier} archive, containing all jars and docs, " +
+          "suitable for community download page."
 
-		def baseDir = "${project.name}-${project.version}";
+    def baseDir = "${project.name}-${project.version}";
 
-		from('src/dist') {
-			include 'readme.txt'
-			include 'license.txt'
-			include 'notice.txt'
-			into "${baseDir}"
-			expand(copyright: new Date().format('yyyy'), version: project.version)
-		}
+    from('src/dist') {
+      include 'readme.txt'
+      include 'license.txt'
+      include 'notice.txt'
+      into "${baseDir}"
+      expand(copyright: new Date().format('yyyy'), version: project.version)
+    }
 
-		from(zipTree(docsZip.archivePath)) {
-			into "${baseDir}/docs"
-		}
+    from(zipTree(docsZip.archivePath)) {
+      into "${baseDir}/docs"
+    }
 
-		allprojects.each { project ->
-			into ("${baseDir}/libs") {
-				from project.jar
-				if (project.tasks.findByPath('sourcesJar')) {
-					from project.sourcesJar
-				}
-				if (project.tasks.findByPath('javadocJar')) {
-					from project.javadocJar
-				}
-			}
-		}
-	}
+    allprojects.each { project ->
+      into ("${baseDir}/libs") {
+        from project.jar
+        if (project.tasks.findByPath('sourcesJar')) {
+          from project.sourcesJar
+        }
+        if (project.tasks.findByPath('javadocJar')) {
+          from project.javadocJar
+        }
+      }
+    }
+  }
 
-	artifacts {
-		archives docsZip
-		archives distZip
-	}
+  artifacts {
+    archives docsZip
+    archives distZip
+  }
 
-	task wrapper(type: Wrapper) {
-		description = 'Generates gradlew[.bat] scripts'
-		gradleVersion = '1.1'
-	}
+  task wrapper(type: Wrapper) {
+    description = 'Generates gradlew[.bat] scripts'
+    gradleVersion = '1.1'
+  }
 }
 
