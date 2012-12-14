@@ -19,8 +19,8 @@ import java.util.Map;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.geb.GebSpecTestExecutionListener;
-import org.springframework.test.web.mock.servlet.MockMvc;
-import org.springframework.test.web.mock.servlet.ResultActions;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.webdriver.MockMvcHtmlUnitDriver;
 import org.springframework.util.Assert;
 

@@ -15,8 +15,8 @@ package org.springframework.test.web.webdriver;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.test.web.htmlunit.MockMvcWebConnection;
-import org.springframework.test.web.mock.servlet.MockMvc;
-import org.springframework.test.web.mock.servlet.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 

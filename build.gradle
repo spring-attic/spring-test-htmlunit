@@ -1,6 +1,6 @@
 ext.junitVersion ='4.8.2'
 ext.seleniumVersion = '2.25.0'
-ext.springVersion = '3.2.0.BUILD-SNAPSHOT'
+ext.springVersion = '3.2.0.RELEASE'
 
 configure(allprojects) {
   apply plugin: 'java'
@@ -19,8 +19,6 @@ configure(allprojects) {
   test.systemProperty("java.awt.headless", "true")
 
   repositories {
-    maven { url "http://repo.springsource.org/libs-snapshot" }
-    maven { url "http://repo.springsource.org/libs-milestone" }
     mavenCentral()
   }
 
@@ -131,7 +129,7 @@ project("mail-webapp") {
 }
 
 configure(rootProject) {
-  description = 'Provides integration between spring-test-mvc and htmlunit'
+  description = 'Provides integration between Spring Test MVC and htmlunit'
 
   dependencies {
     compile "org.springframework:spring-test:$springVersion",
