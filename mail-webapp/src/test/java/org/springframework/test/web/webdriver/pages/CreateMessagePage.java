@@ -25,26 +25,26 @@ import org.springframework.test.web.mail.data.Message;
  *
  */
 public class CreateMessagePage extends AbstractPage {
-	private WebElement summary;
+    private WebElement summary;
 
-	private WebElement text;
+    private WebElement text;
 
-	@FindBy(css = "input[type=submit]")
-	private WebElement submit;
+    @FindBy(css = "input[type=submit]")
+    private WebElement submit;
 
-	public CreateMessagePage(WebDriver driver) {
-		super(driver);
-	}
+    public CreateMessagePage(WebDriver driver) {
+        super(driver);
+    }
 
-	public <T> T createMessage(Class<T> resultPage, String summary, String details) {
-		this.summary.sendKeys(summary);
-		this.text.sendKeys(details);
-		this.submit.click();
-		return PageFactory.initElements(driver, resultPage);
-	}
+    public <T> T createMessage(Class<T> resultPage, String summary, String details) {
+        this.summary.sendKeys(summary);
+        this.text.sendKeys(details);
+        this.submit.click();
+        return PageFactory.initElements(driver, resultPage);
+    }
 
-	public static CreateMessagePage to(WebDriver driver) {
-		driver.get("http://localhost:8080/mail/messages/?form=1");
-		return PageFactory.initElements(driver, CreateMessagePage.class);
-	}
+    public static CreateMessagePage to(WebDriver driver) {
+        driver.get("http://localhost:9990/mail/messages/?form=1");
+        return PageFactory.initElements(driver, CreateMessagePage.class);
+    }
 }

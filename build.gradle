@@ -112,6 +112,7 @@ project("mail-webapp") {
 
   eclipse.wtp.component.contextPath = '/mail'
   [jettyRunWar, jettyRun]*.contextPath = 'mail'
+  [jettyRunWar, jettyRun]*.httpPort = 9990
 
   test {
     doFirst {
