@@ -43,20 +43,17 @@ Building with Maven
 
 The project is available in the [Spring Snapshot Repository](https://github.com/SpringSource/spring-framework/wiki/SpringSource-repository-FAQ). In short ensure you have the following repository in your pom.xml:
 
-	<repositories>
-		<repository>
-			<id>spring-libs-snapshot</id>
-			<name>Spring project release, milestone, and snapshot artifacts and transitive dependencies</name>
-			<url>http://repo.springsource.org/libs-snapshot</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		...
-	</repositories>
+	<repository>
+		<id>spring-libs-snapshot</id>
+		<name>Spring Snapshot Repository</name>
+		<url>http://repo.springsource.org/snapshot</url>
+		<releases>
+			<enabled>false</enabled>
+		</releases>
+		<snapshots>
+			<enabled>true</enabled>
+		</snapshots>
+	</repository>
 
 Then ensure you have added the dependency:
 
