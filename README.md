@@ -70,7 +70,7 @@ The miniumum JDK is 1.6 Not only has [Java 1.5 reached EOL](http://www.oracle.co
 
 Contributing
 ==============
-Before contributing or logging an issue please be sure to the issue does not already exist in this project's [issue tracking](https://github.com/rwinch/spring-test-mvc-htmlunit/issues). If one does not exist, please create an issue.
+Before contributing or logging an issue please be sure to the issue does not already exist in this project's [issue tracking](https://github.com/SpringSource/spring-test-mvc-htmlunit/issues). If one does not exist, please create an issue.
 
 If you see anything you'd like to change we encourage taking advantage of github's social coding features by making the change in a [fork of this repository](http://help.github.com/forking/) and sending a pull request.
 
