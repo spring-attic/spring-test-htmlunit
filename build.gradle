@@ -81,7 +81,7 @@ project("mail-webapp") {
 
   description = 'Spring Test MVC HtmlUnit Sample'
 
-  configurations.archives.artifacts.clear()
+  tasks.findByPath("artifactoryPublish")?.enabled = false
 
   dependencies {
     groovy 'org.codehaus.groovy:groovy:1.8.7'
