@@ -4,9 +4,9 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="messageRepository" class="org.mockito.Mockito" factory-method="mock">
-		<constructor-arg value="org.springframework.test.web.mail.data.MessageRepository"/>
+		<constructor-arg value="org.springframework.test.web.server.htmlunit.mail.data.MessageRepository"/>
 	</bean>
-	<bean id="mockConversionService" class="org.springframework.test.web.mail.data.mock.MockConversionService">
+	<bean id="mockConversionService" class="org.springframework.test.web.server.htmlunit.mail.data.mock.MockConversionService">
 		<constructor-arg ref="conversionService" />
 	</bean>
 </beans>

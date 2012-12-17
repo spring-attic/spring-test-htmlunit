@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/data/jpa https://raw.github.com/SpringSource/spring-data-jpa/master/src/main/resources/org/springframework/data/jpa/repository/config/spring-jpa-1.1.xsd">
 
-	<jpa:repositories base-package="org.springframework.test.web.mail.data" />
+	<jpa:repositories base-package="org.springframework.test.web.server.htmlunit.mail.data" />
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource" />
