@@ -38,6 +38,35 @@ The following provides information on setting up a development environment that 
 
 Any tests ending in ITest or ISpec require the application to be deployed to http://localhost:9990/mail/. You should be able to do this easily using Eclipse WTP. Other tests run using Sprint Test MVC and do not require the application to be deployed.
 
+Building with Maven
+==============
+
+The project is available in the [Spring Snapshot Repository](https://github.com/SpringSource/spring-framework/wiki/SpringSource-repository-FAQ). In short ensure you have the following repository in your pom.xml:
+
+	<repositories>
+		<repository>
+			<id>spring-libs-snapshot</id>
+			<name>Spring project release, milestone, and snapshot artifacts and transitive dependencies</name>
+			<url>http://repo.springsource.org/libs-snapshot</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		...
+	</repositories>
+
+Then ensure you have added the dependency:
+
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-test-mvc-htmlunit</artifactId>
+		<version>1.0.0.BUILD-SNAPSHOT</version>
+		<scope>test</scope>
+	</dependency>
+
 Minimum JDK
 ==============
 The miniumum JDK is 1.6 Not only has [Java 1.5 reached EOL](http://www.oracle.com/technetwork/java/eol-135779.html ), but this is necessary to keep up to date with dependencies since [Selenium requires JDK 1.6](https://groups.google.com/forum/#!searchin/selenium-developers/java$206/selenium-developers/aB5NqZkJIpQ/VDZhrLuh7IIJ).
