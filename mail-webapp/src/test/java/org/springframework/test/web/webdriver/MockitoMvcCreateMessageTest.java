@@ -30,18 +30,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.mail.data.Message;
 import org.springframework.test.web.mail.data.MessageRepository;
-import org.springframework.test.web.server.context.WebContextLoader;
 import org.springframework.test.web.webdriver.MockMvcHtmlUnitDriver;
 import org.springframework.test.web.webdriver.pages.CreateMessagePage;
 import org.springframework.test.web.webdriver.pages.ViewMessagePage;
 import org.springframework.web.context.WebApplicationContext;
 
-@SuppressWarnings("deprecation")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:mock-spring-data.xml",
-		"file:src/main/webapp/WEB-INF/message-servlet.xml" }, loader = WebContextLoader.class)
+		"file:src/main/webapp/WEB-INF/message-servlet.xml" })
+@WebAppConfiguration
 public class MockitoMvcCreateMessageTest extends AbstractWebDriverTest {
 	@Autowired
 	private WebApplicationContext context;

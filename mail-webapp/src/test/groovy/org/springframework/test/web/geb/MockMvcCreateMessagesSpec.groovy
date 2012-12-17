@@ -17,7 +17,7 @@ import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener
-import org.springframework.test.web.server.context.WebContextLoader
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.geb.GebSpecTestExecutionListener
 
 /**
@@ -25,13 +25,12 @@ import org.springframework.test.web.geb.GebSpecTestExecutionListener
  * @author Rob Winch
  *
  */
-@SuppressWarnings("deprecation")
-@ContextConfiguration(locations = ["file:src/main/webapp/WEB-INF/message-servlet.xml","file:src/main/webapp/WEB-INF/spring/*.xml"],
-		loader = WebContextLoader)
+@ContextConfiguration(locations = ["file:src/main/webapp/WEB-INF/message-servlet.xml","file:src/main/webapp/WEB-INF/spring/*.xml"])
 @TestExecutionListeners([ DependencyInjectionTestExecutionListener,
 		DirtiesContextTestExecutionListener,
 		TransactionalTestExecutionListener,
 		GebSpecTestExecutionListener])
+@WebAppConfiguration
 class MockMvcCreateMessagesSpec extends CreateMessagesISpec {
 
 }
