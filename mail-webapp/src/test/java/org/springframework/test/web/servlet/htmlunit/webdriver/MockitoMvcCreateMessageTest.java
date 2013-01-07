@@ -92,7 +92,7 @@ public class MockitoMvcCreateMessageTest extends AbstractWebDriverTest {
 		String expectedSummary = expectedMessage.getSummary();
 		String expectedText = expectedMessage.getText();
 		Date expectedTime = expectedMessage.getCreated().getTime();
-		String expectedCreated = new DateFormatter("MMMM dd, yyyy h:mm:ss a z")
+		String expectedCreated = new DateFormatter("MMMM d, yyyy h:mm:ss a z")
 				.print(expectedTime, Locale.getDefault());
 
 		CreateMessagePage page = CreateMessagePage.to(getDriver());
