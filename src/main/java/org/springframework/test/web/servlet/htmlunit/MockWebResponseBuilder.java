@@ -17,8 +17,8 @@ package org.springframework.test.web.servlet.htmlunit;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -76,7 +76,7 @@ final class MockWebResponseBuilder {
 	}
 
 	private List<NameValuePair> responseHeaders() {
-		Set<String> headerNames = response.getHeaderNames();
+		Collection<String> headerNames = response.getHeaderNames();
 		List<NameValuePair> responseHeaders = new ArrayList<NameValuePair>(headerNames.size());
 		for (String headerName : headerNames) {
 			List<Object> headerValues = response.getHeaderValues(headerName);
