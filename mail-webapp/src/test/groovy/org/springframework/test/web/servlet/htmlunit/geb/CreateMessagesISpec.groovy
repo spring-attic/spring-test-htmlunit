@@ -55,7 +55,7 @@ class CreateMessagesISpec extends GebReportingSpec {
 		when:
 		form.summary = expectedSummary
 		form.text = expectedMessage
-		submit.click(CreateMessagePage)
+		submit.click(ViewMessagePage)
 		then:
 		at ViewMessagePage
 		success == 'Successfully created a new message'

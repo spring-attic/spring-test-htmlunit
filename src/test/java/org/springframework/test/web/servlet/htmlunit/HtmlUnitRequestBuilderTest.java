@@ -483,7 +483,7 @@ public class HtmlUnitRequestBuilderTest {
 	@Test
 	public void buildRequestUrl() {
 		String uri = requestBuilder.buildRequest(servletContext).getRequestURL().toString();
-		assertThat(uri).isEqualTo("http://example.com:80/test/this/here");
+		assertThat(uri).isEqualTo("http://example.com/test/this/here");
 	}
 
 	@Test

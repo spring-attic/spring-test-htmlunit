@@ -1,11 +1,26 @@
+buildscript {
+  repositories {
+    maven { url "https://repo.spring.io/plugins-release" }
+    maven { url "https://repo.spring.io/plugins-snapshot" }
+  }
+  dependencies {
+    classpath("org.springframework.build.gradle:propdeps-plugin:0.0.6-SNAPSHOT")
+    classpath('me.champeau.gradle:gradle-javadoc-hotfix-plugin:0.1')
+  }
+}
+
 ext.junitVersion ='4.8.2'
-ext.seleniumVersion = '2.25.0'
-ext.springVersion = '3.2.8.RELEASE'
+ext.seleniumVersion = '2.40.0'
+ext.springVersion = '4.0.2.RELEASE'
 
 configure(allprojects) {
   apply plugin: 'java'
   apply plugin: 'eclipse-wtp'
   apply plugin: 'idea'
+  apply plugin: 'propdeps'
+  apply plugin: 'propdeps-maven'
+  apply plugin: 'propdeps-idea'
+  apply plugin: 'propdeps-eclipse'
 
   apply from: "${rootProject.projectDir}/publish-maven.gradle"
 
@@ -30,6 +45,13 @@ configure(allprojects) {
     }
   }
 
+
+  idea {
+    module {
+      scopes.PROVIDED.plus += configurations.provided
+      scopes.PROVIDED.plus += configurations.optional
+    }
+  }
   // servlet-api (2.5) and tomcat-servlet-api (3.0) classpath entries should not be
   // exported to dependent projects in Eclipse to avoid false compilation errors due
   // to changing APIs across these versions
@@ -68,7 +90,7 @@ configure(allprojects) { subproject ->
   task listDependencies {
     doLast {
       println project.name
-      configurations.runtime.collect { "    $it.name" }.sort().each { println it }
+      configurations.testRuntime.collect { "    $it.path" }.sort().each { println it }
     }
   }
 }
@@ -83,30 +105,31 @@ project("mail-webapp") {
   tasks.findByPath("artifactoryPublish")?.enabled = false
 
   dependencies {
-    groovy 'org.codehaus.groovy:groovy:1.8.7'
-
     compile "org.springframework:spring-context:$springVersion",
         "org.springframework:spring-webmvc:$springVersion",
-        "org.springframework.data:spring-data-jpa:1.1.1.RELEASE",
-        "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final",
-        "org.hibernate:hibernate-entitymanager:4.1.4.Final",
+        "org.springframework.data:spring-data-jpa:1.5.1.RELEASE",
+        "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final",
+        "org.hibernate:hibernate-entitymanager:4.3.4.Final",
         "org.hibernate:hibernate-validator:4.1.0.Final",
         "org.aspectj:aspectjrt:1.6.10",
         "javax.validation:validation-api:1.0.0.GA",
-        "org.slf4j:slf4j-log4j12:1.6.1",
-        "org.hsqldb:hsqldb:2.2.8",
-        "org.thymeleaf:thymeleaf:2.0.12",
-        "org.thymeleaf:thymeleaf-spring3:2.0.12"
+        "org.slf4j:slf4j-log4j12:1.7.6",
+        "org.hsqldb:hsqldb:2.3.2",
+        "org.thymeleaf:thymeleaf:2.1.2.RELEASE",
+        "org.thymeleaf:thymeleaf-spring4:2.1.2.RELEASE"
 
     testCompile rootProject,
+      "org.springframework:spring-test:$springVersion",
       "org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion",
       "org.seleniumhq.selenium:selenium-support:$seleniumVersion",
-      'org.codehaus.geb:geb-spock:0.7.1',
-      'org.spockframework:spock-core:0.6-groovy-1.8',
-      'org.spockframework:spock-spring:0.6-groovy-1.8',
+      'org.gebish:geb-spock:0.9.2',
+      'org.spockframework:spock-core:0.7-groovy-2.0',
+      'org.spockframework:spock-spring:0.7-groovy-2.0',
       "junit:junit:$junitVersion",
       'org.easytesting:fest-assert:1.4',
-      "org.mockito:mockito-all:1.9.0"
+      "org.mockito:mockito-all:1.9.5",
+      "org.codehaus.groovy:groovy:2.2.2",
+      'javax.servlet:javax.servlet-api:3.0.1'
   }
 
   eclipse.wtp.component.contextPath = '/mail'
@@ -135,9 +158,11 @@ configure(rootProject) {
     compile "org.springframework:spring-test:$springVersion",
         "org.springframework:spring-context:$springVersion",
         "org.springframework:spring-web:$springVersion",
-        "net.sourceforge.htmlunit:htmlunit:2.10"
-    compile("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion",optional)
-    compile('javax.servlet:servlet-api:2.5',provided)
+        "net.sourceforge.htmlunit:htmlunit:2.13"
+
+    optional "org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion"
+
+    provided 'javax.servlet:javax.servlet-api:3.0.1'
 
     testCompile 'org.easytesting:fest-assert:1.4',
           "junit:junit:$junitVersion"
