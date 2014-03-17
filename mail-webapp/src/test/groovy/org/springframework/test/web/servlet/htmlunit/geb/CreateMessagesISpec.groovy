@@ -27,41 +27,41 @@ class CreateMessagesISpec extends GebReportingSpec {
 
 	def 'missing field with javascript validation displays error'() {
 		setup:
-		to CreateMessagePage
-		at CreateMessagePage
+			to CreateMessagePage
+			at CreateMessagePage
 		when:
-		submit.click(CreateMessagePage)
+			submit.click(CreateMessagePage)
 		then:
-		errors.contains('This field is required.')
+			errors.contains('This field is required.')
 	}
 
 	def 'missing field server side validation displays error'() {
 		setup:
-		to CreateMessagePage
-		at CreateMessagePage
+			to CreateMessagePage
+			at CreateMessagePage
 		when:
-		form.summary = 'Summary'
-		submit.click(CreateMessagePage)
+			form.summary = 'Summary'
+			submit.click(CreateMessagePage)
 		then:
-		errors.contains('Message is required.')
+			errors.contains('Message is required.')
 	}
 
 	def 'successfully create new message'() {
 		setup:
-		def expectedSummary = 'Summary'
-		def expectedMessage = 'Detailed message that you can see'
-		to CreateMessagePage
-		at CreateMessagePage
+			def expectedSummary = 'Summary'
+			def expectedMessage = 'Detailed message that you can see'
+			to CreateMessagePage
+			at CreateMessagePage
 		when:
-		form.summary = expectedSummary
-		form.text = expectedMessage
-		submit.click(ViewMessagePage)
+			form.summary = expectedSummary
+			form.text = expectedMessage
+			submit.click(ViewMessagePage)
 		then:
-		at ViewMessagePage
-		success == 'Successfully created a new message'
-		id
-		date
-		summary == expectedSummary
-		message == expectedMessage
+			at ViewMessagePage
+			success == 'Successfully created a new message'
+			id
+			date
+			summary == expectedSummary
+			message == expectedMessage
 	}
 }
