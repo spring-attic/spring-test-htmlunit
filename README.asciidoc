@@ -95,7 +95,7 @@ The project should work with Spring 3.2.0+, but use with Spring 4.0 is encourage
 
 Before contributing or logging an issue please be sure to the issue does not already exist in this project's https://github.com/SpringSource/spring-test-mvc-htmlunit/issues[issue tracking]. If one does not exist, please create an issue.
 
-If you see anything you'd like to change we encourage taking advantage of github's social coding features by making the change in a [fork of this repository](http://help.github.com/forking/) and sending a pull request.
+If you see anything you'd like to change we encourage taking advantage of github's social coding features by making the change in a http://help.github.com/forking/[fork of this repository] and sending a pull request.
 
 Before we accept a non-trivial patch or pull request we will need you to sign the https://support.springsource.com/spring_committer_signup[contributor's agreement]. Signing the contributor's agreement does not grant anyone commit rights to the main repository, but it does mean that we can accept your contributions, and you will get an author credit if we do. Active contributors might be asked to join the core team, and given the ability to merge pull requests.
 
