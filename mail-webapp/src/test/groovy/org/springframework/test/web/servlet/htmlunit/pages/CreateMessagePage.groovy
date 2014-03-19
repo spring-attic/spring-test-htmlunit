@@ -23,7 +23,7 @@ import geb.Page
  */
 class CreateMessagePage extends Page {
 	static at = { assert title == 'Messages : Create'; true }
-	static url = 'messages/?form=1'
+	static url = 'messages/form'
 	static content =  {
 		submit { $('input[type=submit]') }
 		form { $('form') }

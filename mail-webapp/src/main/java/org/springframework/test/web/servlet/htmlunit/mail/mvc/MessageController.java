@@ -53,7 +53,7 @@ public class MessageController {
 		return new ModelAndView("messages/view", "message", message);
 	}
 
-	@RequestMapping(params = "form", method = RequestMethod.GET)
+	@RequestMapping(value = "form", method = RequestMethod.GET)
 	public String createForm(@ModelAttribute
 	Message message) {
 		return "messages/form";

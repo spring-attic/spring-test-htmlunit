@@ -21,17 +21,17 @@ import org.springframework.test.web.servlet.htmlunit.webdriver.pages.ViewMessage
 /**
  * <p>
  * An integration test that validates the {@link CreateMessagePage}. Notice that we are able to reuse the same page
- * objects as the {@link MockMvcCreateMessageTest} and the {@link MockitoMvcCreateMessageTest}.
+ * objects as the {@link MockMvcHtmlUnitDriverCreateMessageTest} and the {@link MockitoMockMvcHtmlUnitDriverCreateMessageTest}.
  * </p>
  * <p>
  * <strong>NOTE</strong> The web application must actually be running for this test to pass.
  * </p>
  *
  * @author Rob Winch
- * @see MockMvcCreateMessageTest
- * @see MockitoMvcCreateMessageTest
+ * @see MockMvcHtmlUnitDriverCreateMessageTest
+ * @see MockitoMockMvcHtmlUnitDriverCreateMessageTest
  */
-public class CreateMessageITest extends AbstractWebDriverTest {
+public class WebDriverCreateMessageITest extends AbstractWebDriverTest {
 
 	@Test
 	public void missingFieldWithJavascriptValidationDisplaysError() {

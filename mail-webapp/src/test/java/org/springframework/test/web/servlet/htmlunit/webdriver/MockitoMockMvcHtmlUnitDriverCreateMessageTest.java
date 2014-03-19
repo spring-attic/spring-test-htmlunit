@@ -45,7 +45,7 @@ import org.springframework.web.context.WebApplicationContext;
 @ContextConfiguration(locations = { "classpath:mock-spring-data.xml",
 		"file:src/main/webapp/WEB-INF/message-servlet.xml" })
 @WebAppConfiguration
-public class MockitoMvcCreateMessageTest extends AbstractWebDriverTest {
+public class MockitoMockMvcHtmlUnitDriverCreateMessageTest extends AbstractWebDriverTest {
 	@Autowired
 	private WebApplicationContext context;
 

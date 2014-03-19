@@ -43,7 +43,9 @@ public class AbstractWebDriverTest {
 
 	@AfterClass
 	public static void destroy() {
-		driver.close();
+		if(driver != null) {
+			driver.close();
+		}
 		driver = null;
 	}
 
