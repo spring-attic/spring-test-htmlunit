@@ -129,7 +129,8 @@ project("mail-webapp") {
       'org.easytesting:fest-assert:1.4',
       "org.mockito:mockito-all:1.9.5",
       "org.codehaus.groovy:groovy:2.2.2",
-      'javax.servlet:javax.servlet-api:3.0.1'
+      'javax.servlet:javax.servlet-api:3.0.1',
+      'org.easytesting:fest-assert:1.4'
   }
 
   eclipse.wtp.component.contextPath = '/mail'
