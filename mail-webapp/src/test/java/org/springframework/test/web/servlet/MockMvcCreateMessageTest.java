@@ -15,6 +15,7 @@
  */
 package org.springframework.test.web.servlet;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +35,7 @@ import java.util.Calendar;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -72,6 +74,11 @@ public class MockMvcCreateMessageTest {
 			}
 		});
 		when(messages.findOne(anyLong())).thenReturn(message);
+	}
+
+	@After
+	public void cleanup() {
+		reset(messages);
 	}
 
 	@Test
