@@ -29,6 +29,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.htmlunit.MockMvcWebConnection;
+import sample.config.MockDataConfig;
+import sample.config.WebMvcConfig;
 import sample.data.Message;
 import sample.data.MessageRepository;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -47,16 +49,12 @@ import static org.mockito.Mockito.when;
  * @author Rob Winch
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:mock-spring-data.xml",
-		"file:src/main/webapp/WEB-INF/message-servlet.xml" })
+@ContextConfiguration(classes = {WebMvcConfig.class, MockDataConfig.class})
 @WebAppConfiguration
 public class MockMvcHtmlUnitCreateMessageTest {
 
 	@Autowired
 	private WebApplicationContext context;
-
-	@Autowired
-	private MessageRepository messages;
 
 	private WebClient webClient;
 
@@ -65,23 +63,10 @@ public class MockMvcHtmlUnitCreateMessageTest {
 		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 		webClient = new WebClient();
 		webClient.setWebConnection(new MockMvcWebConnection(mockMvc));
-
-		Message message = getExpectedMessage();
-		when(messages.save(any(Message.class))).thenAnswer(new Answer<Message>() {
-			@Override
-			public Message answer(InvocationOnMock invocation) throws Throwable {
-				Object[] args = invocation.getArguments();
-				Message result = (Message) args[0];
-				result.setId(123L);
-				return result;
-			}
-		});
-		when(messages.findOne(anyLong())).thenReturn(message);
 	}
 
 	@After
 	public void cleanup() {
-		reset(messages);
 		this.webClient.closeAllWindows();
 	}
 
@@ -105,14 +90,5 @@ public class MockMvcHtmlUnitCreateMessageTest {
 		assertThat(summary).isEqualTo("Spring Rocks");
 		String text = newMessagePage.getHtmlElementById("text").getTextContent();
 		assertThat(text).isEqualTo("In case you didn't know, Spring Rocks!");
-	}
-
-	private Message getExpectedMessage() {
-		Message message = new Message();
-		message.setCreated(Calendar.getInstance());
-		message.setId(123L);
-		message.setSummary("Spring Rocks");
-		message.setText("In case you didn't know, Spring Rocks!");
-		return message;
 	}
 }

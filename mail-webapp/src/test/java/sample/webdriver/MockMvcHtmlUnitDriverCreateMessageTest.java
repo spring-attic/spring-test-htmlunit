@@ -7,6 +7,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver;
+import sample.config.MockDataConfig;
+import sample.config.WebMvcConfig;
 import sample.webdriver.pages.CreateMessagePage;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -28,8 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/message-servlet.xml",
-		"file:src/main/webapp/WEB-INF/spring/*.xml" })
+@ContextConfiguration(classes = {WebMvcConfig.class, MockDataConfig.class})
 @WebAppConfiguration
 public class MockMvcHtmlUnitDriverCreateMessageTest extends WebDriverCreateMessageITest {
 	@Autowired

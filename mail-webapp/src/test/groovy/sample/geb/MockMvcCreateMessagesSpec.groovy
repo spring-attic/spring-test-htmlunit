@@ -19,13 +19,15 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener
 import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.test.web.servlet.htmlunit.geb.GebSpecTestExecutionListener
+import sample.config.MockDataConfig
+import sample.config.WebMvcConfig
 
 /**
  *
  * @author Rob Winch
  *
  */
-@ContextConfiguration(locations = ["file:src/main/webapp/WEB-INF/message-servlet.xml","file:src/main/webapp/WEB-INF/spring/*.xml"])
+@ContextConfiguration(classes=[WebMvcConfig,MockDataConfig])
 @TestExecutionListeners([ DependencyInjectionTestExecutionListener,
 		DirtiesContextTestExecutionListener,
 		TransactionalTestExecutionListener,

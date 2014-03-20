@@ -2,10 +2,12 @@ buildscript {
   repositories {
     maven { url "https://repo.spring.io/plugins-release" }
     maven { url "https://repo.spring.io/plugins-snapshot" }
+    jcenter()
   }
   dependencies {
     classpath("org.springframework.build.gradle:propdeps-plugin:0.0.6-SNAPSHOT")
     classpath('me.champeau.gradle:gradle-javadoc-hotfix-plugin:0.1')
+    classpath('org.gradle.api.plugins:gradle-tomcat-plugin:1.2.2')
   }
 }
 
@@ -98,13 +100,38 @@ configure(allprojects) { subproject ->
 project("mail-webapp") {
   apply plugin: 'groovy'
   apply plugin: 'war'
-  apply plugin: 'jetty'
+  apply plugin: 'tomcat'
+
+  ext {
+    tomcatStopPort = 9876
+    tomcatStopKey = 'stopKey'
+  }
+
+  task integrationTomcatRunWar(type: org.gradle.api.plugins.tomcat.tasks.TomcatRunWar, dependsOn: war) {
+    contextPath = '/mail'
+    httpPort = 9990
+    stopPort = tomcatStopPort
+    stopKey = tomcatStopKey
+    daemon = true
+  }
+
+  task integrationTomcatStop(type: org.gradle.api.plugins.tomcat.tasks.TomcatStop, dependsOn: war) {
+    stopPort = tomcatStopPort
+    stopKey = tomcatStopKey
+  }
 
   description = 'Spring Test MVC HtmlUnit Sample'
 
   tasks.findByPath("artifactoryPublish")?.enabled = false
 
   dependencies {
+    def tomcatVersion = '7.0.42'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+        "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+      exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
+
     compile "org.springframework:spring-context:$springVersion",
         "org.springframework:spring-webmvc:$springVersion",
         "org.springframework.data:spring-data-jpa:1.5.1.RELEASE",
@@ -118,6 +145,8 @@ project("mail-webapp") {
         "org.thymeleaf:thymeleaf:2.1.2.RELEASE",
         "org.thymeleaf:thymeleaf-spring4:2.1.2.RELEASE"
 
+    providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
+
     testCompile rootProject,
       "org.springframework:spring-test:$springVersion",
       "org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion",
@@ -129,27 +158,15 @@ project("mail-webapp") {
       'org.easytesting:fest-assert:1.4',
       "org.mockito:mockito-all:1.9.5",
       "org.codehaus.groovy:groovy:2.2.2",
-      'javax.servlet:javax.servlet-api:3.0.1',
       'org.easytesting:fest-assert:1.4'
   }
 
   eclipse.wtp.component.contextPath = '/mail'
-  [jettyRunWar, jettyRun]*.contextPath = 'mail'
-  [jettyRunWar, jettyRun]*.httpPort = 9990
 
   test {
-    doFirst {
-      project.stopPort = 9876
-      project.stopKey = 'stop'
-      jettyRun.daemon = true
-      jettyRun.execute()
-    }
-    doLast {
-      jettyStop.execute()
-    }
+    dependsOn integrationTomcatRunWar
+    finalizedBy integrationTomcatStop
   }
-
-  test.dependsOn war
 }
 
 configure(rootProject) {

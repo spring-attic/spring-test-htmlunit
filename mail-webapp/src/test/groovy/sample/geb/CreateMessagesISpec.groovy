@@ -14,7 +14,7 @@ package sample.geb
 
 import geb.Page
 import geb.spock.GebReportingSpec
-
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.geb.pages.*
 import sample.geb.pages.CreateMessagePage
 import sample.geb.pages.ViewMessagePage
@@ -49,8 +49,8 @@ class CreateMessagesISpec extends GebReportingSpec {
 
 	def 'successfully create new message'() {
 		setup:
-			def expectedSummary = 'Summary'
-			def expectedMessage = 'Detailed message that you can see'
+			def expectedSummary = 'Spring Rocks'
+			def expectedMessage = 'In case you didn\'t know, Spring Rocks!'
 			to CreateMessagePage
 			at CreateMessagePage
 		when:

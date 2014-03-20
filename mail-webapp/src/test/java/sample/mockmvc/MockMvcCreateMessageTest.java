@@ -26,12 +26,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import sample.config.MockDataConfig;
+import sample.config.WebMvcConfig;
 import sample.data.Message;
 import sample.data.MessageRepository;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Calendar;
 
 import static org.mockito.Matchers.any;
@@ -48,38 +51,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Rob Winch
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:mock-spring-data.xml",
-		"file:src/main/webapp/WEB-INF/message-servlet.xml" })
+@ContextConfiguration(classes = {WebMvcConfig.class, MockDataConfig.class})
 @WebAppConfiguration
 public class MockMvcCreateMessageTest {
 
 	@Autowired
 	private WebApplicationContext context;
-	@Autowired
-	private MessageRepository messages;
 
 	private MockMvc mockMvc;
 
 	@Before
 	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-
-		Message message = getExpectedMessage();
-		when(messages.save(any(Message.class))).thenAnswer(new Answer<Message>() {
-			@Override
-			public Message answer(InvocationOnMock invocation) throws Throwable {
-				Object[] args = invocation.getArguments();
-				Message result = (Message) args[0];
-				result.setId(123L);
-				return result;
-			}
-		});
-		when(messages.findOne(anyLong())).thenReturn(message);
-	}
-
-	@After
-	public void cleanup() {
-		reset(messages);
 	}
 
 	@Test
@@ -115,14 +98,5 @@ public class MockMvcCreateMessageTest {
 		mockMvc.perform(createMessage)
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("/messages/123"));
-	}
-
-	private Message getExpectedMessage() {
-		Message message = new Message();
-		message.setCreated(Calendar.getInstance());
-		message.setId(123L);
-		message.setSummary("Summary");
-		message.setText("Detailed message that you can see");
-		return message;
 	}
 }

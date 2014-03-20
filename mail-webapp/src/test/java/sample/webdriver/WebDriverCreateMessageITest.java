@@ -49,8 +49,8 @@ public class WebDriverCreateMessageITest extends AbstractWebDriverTest {
 
 	@Test
 	public void successfullyCreateMessage() {
-		String expectedSummary = "Summary";
-		String expectedMessage = "Detailed message that you can see";
+		String expectedSummary = "Spring Rocks";
+		String expectedMessage = "In case you didn't know, Spring Rocks!";
 		CreateMessagePage page = CreateMessagePage.to(getDriver());
 
 		ViewMessagePage viewMessagePage = page.createMessage(ViewMessagePage.class, expectedSummary, expectedMessage);
