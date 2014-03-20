@@ -8,7 +8,7 @@ This project's aim is to provide integration between http://docs.spring.io/sprin
 
 = Why Spring Test MockMvc HtmlUnit?
 
-The most obvious question that comes to mind is "Why do I need this?" The answer is best found by exploring a very basic https://github.com/spring-projects/spring-test-mvc-htmlunit/tree/master/mail-webapp[sample application]. Assume you have a Spring MVC web application that allows CRUD operations on a https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/main/java/org/springframework/test/web/servlet/htmlunit/mail/data/Message.java[Message] object. The application also allows paging through all messages. How would you go about testing it?
+The most obvious question that comes to mind is "Why do I need this?" The answer is best found by exploring a very basic https://github.com/spring-projects/spring-test-mvc-htmlunit/tree/master/mail-webapp[sample application]. Assume you have a Spring MVC web application that allows CRUD operations on a https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/main/sample/data/Message.java[Message] object. The application also allows paging through all messages. How would you go about testing it?
 
 With Spring MVC Test, we can easily test if we are able to create a `Message`.
 
