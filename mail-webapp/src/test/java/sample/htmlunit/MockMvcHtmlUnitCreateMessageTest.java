@@ -72,17 +72,19 @@ public class MockMvcHtmlUnitCreateMessageTest {
 
 	@Test
 	public void createMessage() throws IOException {
+		// Load the Create Message Form
 		HtmlPage createMsgFormPage = webClient.getPage("http://localhost/mail/messages/form");
 
+		// Submit the create message form
 		HtmlForm form = createMsgFormPage.getHtmlElementById("messageForm");
-
 		HtmlTextInput summaryInput = createMsgFormPage.getHtmlElementById("summary");
 		summaryInput.setValueAttribute("Spring Rocks");
 		HtmlTextArea textInput = createMsgFormPage.getHtmlElementById("text");
 		textInput.setText("In case you didn't know, Spring Rocks!");
 		HtmlSubmitInput submit = form.getOneHtmlElementByAttribute("input", "type", "submit");
-
 		HtmlPage newMessagePage = submit.click();
+
+		// verify we successfully created a message and displayed the newly create message
 		assertThat(newMessagePage.getUrl().toString()).endsWith("/messages/123");
 		String id = newMessagePage.getHtmlElementById("id").getTextContent();
 		assertThat(id).isEqualTo("123");
