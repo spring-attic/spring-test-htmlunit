@@ -1,4 +1,4 @@
-= Spring Test MVC and HtmlUnit Integration
+= Spring MockMvc HtmlUnit
 Rob Winch
 1.0.0.BUILD-SNAPSHOT
 :toc:
