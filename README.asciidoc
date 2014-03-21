@@ -89,7 +89,6 @@ This would reduce the risk of our test incorrectly passing, but there are still 
 
 The overall problem is that testing a web page is not a single interaction. Instead, it is a combination of how the user interacts with a web page and how that web page interacts with other resources. For example, the result of form view is used as an input to a user for creating a message. Another example is that our form view utilizes additional resources, like JavaScript validation, that impact the behavior of the page.
 
-[[integration-testing]]
 === Integration testing to the rescue?
 
 To resolve the issues above we could perform integration testing, but this has some obvious drawbacks. Consider testing the view that allows us to page through the messages. We might need the following tests:
@@ -252,7 +251,7 @@ public class MockMvcHtmlUnitCreateMessageTest {
 ----
 
 * `@RunWith(SpringJUnit4ClassRunner.class)` allows Spring to perform dependency injection on our `MockMvcHtmlUnitCreateMessageTest`. This is why our `@Autowired` annotations will be honored.
-* `@ContextConfiguration` tells Spring what configuration to load. You will notice that we are loading a mock instance of our data tier to improve the performance of our tests. If we wanted, we could optionally run the tests against a real database. However, this has the disadvantages we <<integration-testing,mentioned previously>>.
+* `@ContextConfiguration` tells Spring what configuration to load. You will notice that we are loading a mock instance of our data tier to improve the performance of our tests. If we wanted, we could optionally run the tests against a real database. However, this has the disadvantages we <<integration-testing-to-the-rescue,mentioned previously>>.
 * `@WebAppConfiguration` indicates to `SpringJUnit4ClassRunner` that it should create a `WebApplicationContext` rather than a `ApplicationContext`.
 
 Next we need to create our `MockMvc` instance from the `context`. An example of how to do this has been provided below:
