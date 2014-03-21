@@ -49,6 +49,7 @@ public class MockDataConfig {
 				Object[] args = invocation.getArguments();
 				Message result = (Message) args[0];
 				result.setId(message.getId());
+				result.setCreated(message.getCreated());
 				return result;
 			}
 		});

@@ -232,7 +232,7 @@ Now that we have the <<updating-dependencies,correct dependencies>>, we can use 
 
 === Creating MockMvc
 
-In order to use HtmlUnit and Spring MVC Test we must first create a MockMvc instance. There is plenty of documentation on how to create a MockMvc instance, but we will review how to create a MockMvc instance very quickly in this section.
+In order to use HtmlUnit and Spring MVC Test we must first create a `MockMvc` instance. There is plenty of documentation on how to create a `MockMvc` instance, but we will review how to create a `MockMvc` instance very quickly in this section.
 
 The first step is to create a new JUnit class that is annotated as shown below:
 

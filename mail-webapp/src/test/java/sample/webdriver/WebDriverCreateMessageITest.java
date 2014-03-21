@@ -12,11 +12,15 @@
  */
 package sample.webdriver;
 
-import static org.fest.assertions.Assertions.assertThat;
-
 import org.junit.Test;
+import sample.config.MockDataConfig;
+import sample.data.Message;
 import sample.webdriver.pages.CreateMessagePage;
 import sample.webdriver.pages.ViewMessagePage;
+
+import java.text.ParseException;
+
+import static sample.fest.Assertions.assertThat;
 
 /**
  * <p>
@@ -32,6 +36,7 @@ import sample.webdriver.pages.ViewMessagePage;
  * @see MockitoMockMvcHtmlUnitDriverCreateMessageTest
  */
 public class WebDriverCreateMessageITest extends AbstractWebDriverTest {
+	private Message expectedMessage = new MockDataConfig().createMessage();
 
 	@Test
 	public void missingFieldWithJavascriptValidationDisplaysError() {
@@ -48,16 +53,14 @@ public class WebDriverCreateMessageITest extends AbstractWebDriverTest {
 	}
 
 	@Test
-	public void successfullyCreateMessage() {
-		String expectedSummary = "Spring Rocks";
-		String expectedMessage = "In case you didn't know, Spring Rocks!";
+	public void successfullyCreateMessage() throws ParseException {
+		String expectedSummary = expectedMessage.getSummary();
+		String expectedText = expectedMessage.getText();
+
 		CreateMessagePage page = CreateMessagePage.to(getDriver());
 
-		ViewMessagePage viewMessagePage = page.createMessage(ViewMessagePage.class, expectedSummary, expectedMessage);
-		assertThat(viewMessagePage.getId()).isNotEmpty();
-		assertThat(viewMessagePage.getCreated()).isNotEmpty();
-		assertThat(viewMessagePage.getSummary()).isEqualTo(expectedSummary);
-		assertThat(viewMessagePage.getText()).isEqualTo(expectedMessage);
+		ViewMessagePage viewMessagePage = page.createMessage(ViewMessagePage.class, expectedSummary, expectedText);
+		assertThat(viewMessagePage.getMessage()).isEqualToIgnoringGeneratedFields(expectedMessage);
 		assertThat(viewMessagePage.getSuccess()).isEqualTo("Successfully created a new message");
 	}
 }

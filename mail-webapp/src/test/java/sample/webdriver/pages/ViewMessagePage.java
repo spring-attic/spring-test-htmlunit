@@ -17,6 +17,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import sample.data.Message;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Locale;
+
 /**
  * Represents the page where the {@link Message} details can be viewed.
  *
@@ -43,12 +48,15 @@ public class ViewMessagePage extends AbstractPage {
 		return success.getText();
 	}
 
-	public String getId() {
-		return id.getText();
+	public Long getId() {
+		return Long.parseLong(id.getText());
 	}
 
-	public String getCreated() {
-		return created.getText();
+	public Calendar getCreated() throws ParseException {
+		Calendar result = Calendar.getInstance();
+		DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.getDefault());
+		result.setTime(format.parse(created.getText()));
+		return result;
 	}
 
 	public String getSummary() {
@@ -57,5 +65,14 @@ public class ViewMessagePage extends AbstractPage {
 
 	public String getText() {
 		return text.getText();
+	}
+
+	public Message getMessage() throws ParseException {
+		Message message = new Message();
+		message.setId(getId());
+		message.setCreated(getCreated());
+		message.setSummary(getSummary());
+		message.setText(getText());
+		return message;
 	}
 }
