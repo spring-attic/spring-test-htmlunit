@@ -105,7 +105,7 @@ So how can we provide a balance between testing the interactions of our pages an
 
 == Updating Dependencies
 
-Before you use the project, you must ensure to update your dependencies. Instructions for both <<Building with Maven>> and <<Building with Gradle>> have been provided below.
+Before you use the project, you must ensure to update your dependencies. Instructions for both <<building-with-maven>> and <<building-with-gradle>> have been provided below.
 
 === Building with Maven
 
