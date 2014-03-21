@@ -101,57 +101,96 @@ So how can we provide a balance between testing the interactions of our pages an
 
 = Getting Started
 
-== Building with Maven
+== Updating Dependencies
 
-The project is available in the https://github.com/SpringSource/spring-framework/wiki/SpringSource-repository-FAQ[Spring Maven Repository].
+Before you use the project, you must ensure to update your dependencies. Instructions for both [[Building with Maven]] and [[Building with Gradle]] have been provided below.
 
-=== Maven Milestone
+=== Building with Maven
+
+The project is available in the https://github.com/SpringSource/spring-framework/wiki/SpringSource-repository-FAQ[Spring Maven Repository]. If you are using Maven, you will want to make the following updates.
+
+**Using the latest Milestone in Maven**
 
 If you want the latest milestone, ensure you have the following repository in your pom.xml:
 
-[source,xml]
-----
+```xml
 <repository>
 	<id>spring-milestone</id>
 	<url>https://repo.spring.io/milestone</url>
 </repository>
-----
+```
 
 Then ensure you have added the dependency:
 
-[source,xml]
-----
+```xml
 <dependency>
 	<groupId>org.springframework</groupId>
 	<artifactId>spring-test-mvc-htmlunit</artifactId>
 	<version>1.0.0.M1</version>
 	<scope>test</scope>
 </dependency>
-----
+```
 
-=== Maven Snapshot
+**Using the latest Snapshot in Maven**
 
 If you want the latest snapshot, ensure you have the following repository in your pom.xml:
 
-[source,xml]
-----
+```xml
 <repository>
 	<id>spring-snapshot</id>
 	<url>https://repo.spring.io/snapshot</url>
 </repository>
-----
+```
 
 Then ensure you have added the dependency:
 
-[source,xml]
-----
+```xml
 <dependency>
 	<groupId>org.springframework</groupId>
 	<artifactId>spring-test-mvc-htmlunit</artifactId>
 	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<scope>test</scope>
 </dependency>
-----
+```
+=== Building with Gradle
+
+The project is available in the https://github.com/SpringSource/spring-framework/wiki/SpringSource-repository-FAQ[Spring Maven Repository]. If you are using Gradle, you will want to make the following updates.
+
+**Using the latest Milestone in Gradle**
+
+If you want the latest milestone, ensure you have the following repository in your pom.xml:
+
+```groovy
+repositories {
+    maven { url 'https://repo.spring.io/milestone' }
+}
+```
+
+Then ensure you have added the dependency:
+
+```groovy
+dependencies {
+    testCompile 'org.springframework:spring-test-mvc-htmlunit:1.0.0.M1'
+}
+```
+
+**Using the latest Snapshot in Gradle**
+
+If you want the latest snapshot, ensure you have the following repository in your pom.xml:
+
+```groovy
+repositories {
+    maven { url 'https://repo.spring.io/snapshot' }
+}
+```
+
+Then ensure you have added the dependency:
+
+```groovy
+dependencies {
+    testCompile 'org.springframework:spring-test-mvc-htmlunit:1.0.0.BUILD-SNAPSHOT'
+}
+```
 
 == Running the sample project
 
