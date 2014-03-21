@@ -2,7 +2,14 @@
 Rob Winch
 1.0.0.BUILD-SNAPSHOT
 :toc:
-
+:toc-placement: preamble
+:sectanchors:
+:icons: font
+:source-highlighter: prettify
+:idseparator: -
+:idprefix:
+:doctype: book
+:numbered:
 
 This project's aim is to provide integration between http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-framework[Spring MVC Test] and http://htmlunit.sourceforge.net/[HtmlUnit]. This simplifies performing end to end testing when using HTML based views. Spring Test MVC HtmlUnit enables developers to:
 
@@ -10,25 +17,27 @@ This project's aim is to provide integration between http://docs.spring.io/sprin
 * Support testing of JavaScript
 * Optionally test using mock services to speed up testing.
 
-= Why Spring Test MockMvc HtmlUnit?
+== Why Spring Test MockMvc HtmlUnit?
 
 The most obvious question that comes to mind is "Why do I need this?" The answer is best found by exploring a very basic https://github.com/spring-projects/spring-test-mvc-htmlunit/tree/master/mail-webapp[sample application]. Assume you have a Spring MVC web application that allows CRUD operations on a https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/main/sample/data/Message.java[Message] object. The application also allows paging through all messages. How would you go about testing it?
 
 With Spring MVC Test, we can easily test if we are able to create a `Message`.
 
-```java
+[source,java]
+----
 MockHttpServletRequestBuilder createMessage = post("/messages/")
-	.param("summary", "Spring Rocks")
-	.param("text", "In case you didn't know, Spring Rocks!");
+  .param("summary", "Spring Rocks")
+  .param("text", "In case you didn't know, Spring Rocks!");
 
 mockMvc.perform(createMessage)
-	.andExpect(status().is3xxRedirection())
-	.andExpect(redirectedUrl("/messages/123"));
-```
+  .andExpect(status().is3xxRedirection())
+  .andExpect(redirectedUrl("/messages/123"));
+----
 
 What if we want to test our form view that allows us to create the message? For example, assume our form looks like the following snippet:
 
-```xml
+[source,xml]
+----
 <form id="messageForm" action="/messages/" method="post">
   <div class="pull-right"><a href="/messages/">Messages</a></div>
 
@@ -42,34 +51,36 @@ What if we want to test our form view that allows us to create the message? For 
     <input type="submit" value="Create" />
   </div>
 </form>
-```
+----
 
 How do we ensure that our form will produce the correct request to create a new message? A naive attempt would look like this:
 
-```java
+[source,java]
+----
 mockMvc.perform(get("/messages/form"))
-		.andExpect(xpath("//input[@name='summary']").exists())
-		.andExpect(xpath("//textarea[@name='text']").exists());
-```
+    .andExpect(xpath("//input[@name='summary']").exists())
+    .andExpect(xpath("//textarea[@name='text']").exists());
+----
 
 This test has some obvious problems. If we updated our controller to use the parameter "message" instead of "text", our test would would incorrectly pass. To resolve this we could combine our two tests:
 
 [[mock-mvc-test]]
-```java
+[source,java]
+----
 String summaryParamName = "summary";
 String textParamName = "text";
 mockMvc.perform(get("/messages/form"))
-		.andExpect(xpath("//input[@name='" + summaryParamName + "']").exists())
-		.andExpect(xpath("//textarea[@name='" + textParamName + "']").exists());
+  .andExpect(xpath("//input[@name='" + summaryParamName + "']").exists())
+  .andExpect(xpath("//textarea[@name='" + textParamName + "']").exists());
 
 MockHttpServletRequestBuilder createMessage = post("/messages/")
-		.param(summaryParamName, "Spring Rocks")
-		.param(textParamName, "In case you didn't know, Spring Rocks!");
+  .param(summaryParamName, "Spring Rocks")
+  .param(textParamName, "In case you didn't know, Spring Rocks!");
 
 mockMvc.perform(createMessage)
-		.andExpect(status().is3xxRedirection())
-		.andExpect(redirectedUrl("/messages/123"));
-```
+  .andExpect(status().is3xxRedirection())
+  .andExpect(redirectedUrl("/messages/123"));
+----
 
 This would reduce the risk of our test incorrectly passing, but there are still some problems:
 
@@ -80,7 +91,7 @@ This would reduce the risk of our test incorrectly passing, but there are still 
 The overall problem is that testing a web page is not a single interaction. Instead, it is a combination of how the user interacts with a web page and how that web page interacts with other resources. For example, the result of form view is used as an input to a user for creating a message. Another example is that our form view utilizes additional resources, like JavaScript validation, that impact the behavior of the page.
 
 [[integration-testing]]
-== Integration testing to the rescue?
+=== Integration testing to the rescue?
 
 To resolve the issues above we could perform integration testing, but this has some obvious drawbacks. Consider testing the view that allows us to page through the messages. We might need the following tests:
 
@@ -97,7 +108,7 @@ To set these tests up we would need to ensure our database contained the proper 
 
 These problems do not mean that we should abandon integration testing all together. Instead, we can reduce the number of integration tests by moving our detailed tests to use mock services which will perform much faster. We can then use fewer integration tests that validate simple workflows to ensure that everything works together properly.
 
-== Enter Spring Test MVC HtmlUnit
+=== Enter Spring Test MVC HtmlUnit
 
 So how can we provide a balance between testing the interactions of our pages and still get performance? I'm sure you already guessed it...Spring Test MVC HtmlUnit will allow us to:
 
@@ -105,7 +116,7 @@ So how can we provide a balance between testing the interactions of our pages an
 * Support testing of JavaScript
 * Optionally test using mock services to speed up testing.
 
-= Getting Started
+== Getting Started
 
 Here is an outline to getting started quickly.
 
@@ -115,14 +126,14 @@ Here is an outline to getting started quickly.
 * <<mockmvc-and-htmlunit>>
 * <<running-the-sample-project>>
 
-== Updating Dependencies
+=== Updating Dependencies
 
 Before you use the project, you must ensure to update your dependencies. Instructions for building with Maven and Gradle have been provided below:
 
  * <<building-with-maven>>
  * <<building-with-gradle>>
 
-=== Building with Maven
+==== Building with Maven
 
 The project is available in the https://github.com/SpringSource/spring-framework/wiki/SpringSource-repository-FAQ[Spring Maven Repository]. If you are using Maven, you will want to make the following updates.
 
@@ -130,46 +141,50 @@ The project is available in the https://github.com/SpringSource/spring-framework
 
 If you want the latest milestone, ensure you have the following repository in your pom.xml:
 
-```xml
+[source,xml]
+----
 <repository>
-	<id>spring-milestone</id>
-	<url>https://repo.spring.io/milestone</url>
+  <id>spring-milestone</id>
+  <url>https://repo.spring.io/milestone</url>
 </repository>
-```
+----
 
 Then ensure you have added the dependency:
 
-```xml
+[source,xml]
+----
 <dependency>
-	<groupId>org.springframework</groupId>
-	<artifactId>spring-test-mvc-htmlunit</artifactId>
-	<version>1.0.0.M1</version>
-	<scope>test</scope>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-test-mvc-htmlunit</artifactId>
+  <version>1.0.0.M1</version>
+  <scope>test</scope>
 </dependency>
-```
+----
 
 **Using the latest Snapshot in Maven**
 
 If you want the latest snapshot, ensure you have the following repository in your pom.xml:
 
-```xml
+[source,xml]
+----
 <repository>
-	<id>spring-snapshot</id>
-	<url>https://repo.spring.io/snapshot</url>
+  <id>spring-snapshot</id>
+  <url>https://repo.spring.io/snapshot</url>
 </repository>
-```
+----
 
 Then ensure you have added the dependency:
 
-```xml
+[source,xml]
+----
 <dependency>
-	<groupId>org.springframework</groupId>
-	<artifactId>spring-test-mvc-htmlunit</artifactId>
-	<version>1.0.0.BUILD-SNAPSHOT</version>
-	<scope>test</scope>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-test-mvc-htmlunit</artifactId>
+  <version>1.0.0.BUILD-SNAPSHOT</version>
+  <scope>test</scope>
 </dependency>
-```
-=== Building with Gradle
+----
+==== Building with Gradle
 
 The project is available in the https://github.com/SpringSource/spring-framework/wiki/SpringSource-repository-FAQ[Spring Maven Repository]. If you are using Gradle, you will want to make the following updates.
 
@@ -177,49 +192,54 @@ The project is available in the https://github.com/SpringSource/spring-framework
 
 If you want the latest milestone, ensure you have the following repository in your pom.xml:
 
-```groovy
+[source,groovy]
+----
 repositories {
-    maven { url 'https://repo.spring.io/milestone' }
+  maven { url 'https://repo.spring.io/milestone' }
 }
-```
+----
 
 Then ensure you have added the dependency:
 
-```groovy
+[source,groovy]
+----
 dependencies {
-    testCompile 'org.springframework:spring-test-mvc-htmlunit:1.0.0.M1'
+  testCompile 'org.springframework:spring-test-mvc-htmlunit:1.0.0.M1'
 }
-```
+----
 
 **Using the latest Snapshot in Gradle**
 
 If you want the latest snapshot, ensure you have the following repository in your pom.xml:
 
-```groovy
+[source,groovy]
+----
 repositories {
-    maven { url 'https://repo.spring.io/snapshot' }
+  maven { url 'https://repo.spring.io/snapshot' }
 }
-```
+----
 
 Then ensure you have added the dependency:
 
-```groovy
+[source,groovy]
+----
 dependencies {
-    testCompile 'org.springframework:spring-test-mvc-htmlunit:1.0.0.BUILD-SNAPSHOT'
+  testCompile 'org.springframework:spring-test-mvc-htmlunit:1.0.0.BUILD-SNAPSHOT'
 }
-```
+----
 
-= MockMvc and HtmlUnit
+== MockMvc and HtmlUnit
 
 Now that we have the <<updating-dependencies,correct dependencies>>, we can use HtmlUnit in our unit tests. Our example assumes you already have JUnit as a dependency. If you have not added it, please update your classpath accordingly. The complete code sample for using HtmlUnit and Spring MVC Test can be found in https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/java/sample/htmlunit/MockMvcHtmlUnitCreateMessageTest.java[MockMvcHtmlUnitCreateMessageTest].
 
-== Creating MockMvc
+=== Creating MockMvc
 
 In order to use HtmlUnit and Spring MVC Test we must first create a MockMvc instance. There is plenty of documentation on how to create a MockMvc instance, but we will review how to create a MockMvc instance very quickly in this section.
 
 The first step is to create a new JUnit class that is annotated as shown below:
 
-```java
+[source,java]
+----
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {WebMvcConfig.class, MockDataConfig.class})
 @WebAppConfiguration
@@ -230,7 +250,7 @@ public class MockMvcHtmlUnitCreateMessageTest {
 
   ...
 }
-```
+----
 
 * `@RunWith(SpringJUnit4ClassRunner.class)` allows Spring to perform dependency injection on our `MockMvcHtmlUnitCreateMessageTest`. This is why our `@Autowired` annotations will be honored.
 * `@ContextConfiguration` tells Spring what configuration to load. You will notice that we are loading a mock instance of our data tier to improve the performance of our tests. If we wanted, we could optionally run the tests against a real database. However, this has the disadvantages we <<integration-testing,mentioned previously>>.
@@ -238,21 +258,23 @@ public class MockMvcHtmlUnitCreateMessageTest {
 
 Next we need to create our `MockMvc` instance from the `context`. An example of how to do this has been provided below:
 
-```java
+[source,java]
+----
 @Before
 public void setup() {
   MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
   ...
 }
-```
+----
 
 Of course this is just one way to create a `MockMvc` instance. We could have decided to http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-server-filters[add a Servlet Filter], use a http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-server-setup-options[Standalone setup], etc. The important thing is that we need an instance of `MockMvc`. For additional information on creating a `MockMvc` instance refer to the http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-framework[Spring MVC Test documentation].
 
-== Initializing HtmlUnit
+=== Initializing HtmlUnit
 
 Now that we have created the `MockMvc` instance, we need to create an HtmlUnit `WebClient`. We use the `MockMvcWebConnection` to ensure that HtmlUnit utilizes the `MockMvc` instance we created in the previous step.
 
-```java
+[source,java]
+----
 private WebClient webClient;
 
 @Before
@@ -262,21 +284,23 @@ public void setup() {
   webClient = new WebClient();
   webClient.setWebConnection(new MockMvcWebConnection(mockMvc));
 }
-```
+----
 
-=== Using HtmlUnit
+==== Using HtmlUnit
 
 Now we can use HtmlUnit as we normally would, but without the need to deploy our application. For example, we can request the view to create a message with the following:
 
-```java
+[source,java]
+----
 HtmlPage createMsgFormPage = webClient.getPage("http://localhost/mail/messages/form");
-```
+----
 
 NOTE: The first path segment, `/mail`, after the host is treated as the context root. A context root of `/` is not currently supported See https://github.com/spring-projects/spring-test-mvc-htmlunit/issues/20[spring-test-mvc-htmlunit/issues/20] to get updates about this.
 
 We can then fill out the form and submit it to create a message.
 
-```java
+[source,java]
+----
 HtmlForm form = createMsgFormPage.getHtmlElementById("messageForm");
 HtmlTextInput summaryInput = createMsgFormPage.getHtmlElementById("summary");
 summaryInput.setValueAttribute("Spring Rocks");
@@ -284,11 +308,12 @@ HtmlTextArea textInput = createMsgFormPage.getHtmlElementById("text");
 textInput.setText("In case you didn't know, Spring Rocks!");
 HtmlSubmitInput submit = form.getOneHtmlElementByAttribute("input", "type", "submit");
 HtmlPage newMessagePage = submit.click();
-```
+----
 
 Finally, we can verify that a new message was created successfully
 
-```java
+[source,java]
+----
 assertThat(newMessagePage.getUrl().toString()).endsWith("/messages/123");
 String id = newMessagePage.getHtmlElementById("id").getTextContent();
 assertThat(id).isEqualTo("123");
@@ -296,14 +321,15 @@ String summary = newMessagePage.getHtmlElementById("summary").getTextContent();
 assertThat(summary).isEqualTo("Spring Rocks");
 String text = newMessagePage.getHtmlElementById("text").getTextContent();
 assertThat(text).isEqualTo("In case you didn't know, Spring Rocks!");
-```
+----
+
 This improves on our <<mock-mvc-test,MockMvc test>> in a number of ways. First we no longer have to explicitly verify our form and then create a request that looks like the form. Instead, we request the form, fill it out, and submit it. This reduces the overhead significantly.
 
 Another important factor is that http://htmlunit.sourceforge.net/javascript.html[HtmlUnit uses Mozilla Rhino engine] to evaluate JavaScript on your pages. This means, that we can verify our JavaScript methods as well!
 
 For the complete example, please refer to https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/java/sample/htmlunit/MockMvcHtmlUnitCreateMessageTest.java[MockMvcHtmlUnitCreateMessageTest]. Refer to the http://htmlunit.sourceforge.net/gettingStarted.html[HtmlUnit documentation] for additional information about using HtmlUnit.
 
-= Running the sample project
+== Running the sample project
 
 The following provides information on setting up a development environment that can run https://github.com/spring-projects/spring-test-mvc-htmlunit/tree/master/mail-webapp[the sample] in http://www.springsource.org/sts[Spring Tool Suite 3.0.0]. Other IDE's should work using Gradle's IDE support, but have not been tested.
 
@@ -318,17 +344,17 @@ The following provides information on setting up a development environment that 
 
 Any tests ending in ITest or ISpec require the application to be deployed to http://localhost:9990/mail/. You should be able to do this easily using Eclipse WTP. Other tests run using Sprint Test MVC and do not require the application to be deployed.
 
-= Minimum Requirements
+== Minimum Requirements
 
-== Minimum JDK
+=== Minimum JDK
 
 The miniumum JDK is 1.6 Not only has http://www.oracle.com/technetwork/java/eol-135779.html[Java 1.5 reached EOL], but this is necessary to keep up to date with dependencies since https://groups.google.com/forum/#!searchin/selenium-developers/java$206/selenium-developers/aB5NqZkJIpQ/VDZhrLuh7IIJ[Selenium requires JDK 1.6].
 
-== Minimum Spring Version
+=== Minimum Spring Version
 
 The project should work with Spring 3.2.0+, but use with Spring 4.0 is encouraged.
 
-= Contributing
+== Contributing
 
 Before contributing or logging an issue please be sure to the issue does not already exist in this project's https://github.com/SpringSource/spring-test-mvc-htmlunit/issues[issue tracking]. If one does not exist, please create an issue.
 
@@ -336,6 +362,6 @@ If you see anything you'd like to change we encourage taking advantage of github
 
 Before we accept a non-trivial patch or pull request we will need you to sign the https://support.springsource.com/spring_committer_signup[contributor's agreement]. Signing the contributor's agreement does not grant anyone commit rights to the main repository, but it does mean that we can accept your contributions, and you will get an author credit if we do. Active contributors might be asked to join the core team, and given the ability to merge pull requests.
 
-= License
+== License
 
 The Spring Test MVC HtmlUnit project is available under version 2.0 of the http://www.apache.org/licenses/LICENSE-2.0[Apache License].
