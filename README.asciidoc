@@ -9,7 +9,6 @@ Rob Winch
 :idseparator: -
 :idprefix:
 :doctype: book
-:numbered:
 
 This project's aim is to provide integration between http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-framework[Spring MVC Test] and http://htmlunit.sourceforge.net/[HtmlUnit]. This simplifies performing end to end testing when using HTML based views. Spring Test MVC HtmlUnit enables developers to:
 
