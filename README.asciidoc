@@ -9,6 +9,7 @@ Rob Winch
 :idseparator: -
 :idprefix:
 :doctype: book
+:selenium-version: 2.40.0
 
 This project's aim is to provide integration between http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-framework[Spring MVC Test] and http://htmlunit.sourceforge.net/[HtmlUnit]. This simplifies performing end to end testing when using HTML based views. Spring Test MVC HtmlUnit enables developers to:
 
@@ -150,11 +151,20 @@ If you want the latest milestone, ensure you have the following repository in yo
 Then ensure you have added the dependency:
 
 [source,xml]
+[subs="verbatim,attributes"]
 ----
 <dependency>
   <groupId>org.springframework</groupId>
   <artifactId>spring-test-mvc-htmlunit</artifactId>
   <version>1.0.0.M1</version>
+  <scope>test</scope>
+</dependency>
+
+<!-- necessary only if you are using WebDriver -->
+<dependency>
+  <groupId>org.seleniumhq.selenium:selenium-htmlunit-driver/groupId>
+  <artifactId>org.seleniumhq.selenium</artifactId>
+  <version>{selenium-version}</version>
   <scope>test</scope>
 </dependency>
 ----
@@ -174,11 +184,20 @@ If you want the latest snapshot, ensure you have the following repository in you
 Then ensure you have added the dependency:
 
 [source,xml]
+[subs="verbatim,attributes"]
 ----
 <dependency>
   <groupId>org.springframework</groupId>
   <artifactId>spring-test-mvc-htmlunit</artifactId>
   <version>1.0.0.BUILD-SNAPSHOT</version>
+  <scope>test</scope>
+</dependency>
+
+<!-- necessary only if you are using WebDriver -->
+<dependency>
+  <groupId>org.seleniumhq.selenium:selenium-htmlunit-driver/groupId>
+  <artifactId>org.seleniumhq.selenium</artifactId>
+  <version>{selenium-version}</version>
   <scope>test</scope>
 </dependency>
 ----
@@ -200,9 +219,13 @@ repositories {
 Then ensure you have added the dependency:
 
 [source,groovy]
+[subs="verbatim,attributes"]
 ----
 dependencies {
   testCompile 'org.springframework:spring-test-mvc-htmlunit:1.0.0.M1'
+
+  // necessary only if you are using WebDriver
+  testCompile "org.seleniumhq.selenium:selenium-htmlunit-driver:{selenium-version}"
 }
 ----
 
@@ -220,9 +243,13 @@ repositories {
 Then ensure you have added the dependency:
 
 [source,groovy]
+[subs="verbatim,attributes"]
 ----
 dependencies {
   testCompile 'org.springframework:spring-test-mvc-htmlunit:1.0.0.BUILD-SNAPSHOT'
+
+  // necessary only if you are using WebDriver
+   testCompile "org.seleniumhq.selenium:selenium-htmlunit-driver:{selenium-version}"
 }
 ----
 
