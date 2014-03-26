@@ -155,7 +155,7 @@ project("mail-webapp") {
       'org.spockframework:spock-core:0.7-groovy-2.0',
       'org.spockframework:spock-spring:0.7-groovy-2.0',
       "junit:junit:$junitVersion",
-      'org.easytesting:fest-assert:1.4',
+      'org.easytesting:fest-assert-core:2.0M10',
       "org.mockito:mockito-all:1.9.5",
       "org.codehaus.groovy:groovy:2.2.2",
       'org.easytesting:fest-assert:1.4'
