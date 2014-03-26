@@ -123,6 +123,7 @@ Here is an outline to getting started quickly.
 ** <<building-with-maven>>
 ** <<building-with-gradle>>
 * <<mockmvc-and-htmlunit>>
+* <<mockmvc-and-webdriver>>
 * <<running-the-sample-project>>
 
 === Updating Dependencies
@@ -353,6 +354,206 @@ This improves on our <<mock-mvc-test,MockMvc test>> in a number of ways. First w
 Another important factor is that http://htmlunit.sourceforge.net/javascript.html[HtmlUnit uses Mozilla Rhino engine] to evaluate JavaScript on your pages. This means, that we can verify our JavaScript methods as well!
 
 For the complete example, please refer to https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/java/sample/htmlunit/MockMvcHtmlUnitCreateMessageTest.java[MockMvcHtmlUnitCreateMessageTest]. Refer to the http://htmlunit.sourceforge.net/gettingStarted.html[HtmlUnit documentation] for additional information about using HtmlUnit.
+
+== MockMvc and WebDriver
+
+We have already seen how to use MockMvc with HtmlUnit. In this section, we will leverage additional abstractions within http://docs.seleniumhq.org/projects/webdriver/[WebDriver] to make things even easier.
+
+=== Why WebDriver?
+
+We can already use HtmlUnit and MockMvc, so why would we want to use WebDriver? WebDriver provides a very elegant API and allows us to easily organize our code. To better understand, let's explore an example.
+
+NOTE: Despite being a part of http://docs.seleniumhq.org/[Selenium], WebDriver does not require a Selenium Server to run your tests.
+
+Suppose we need to ensure that a message is created properly. The tests involve finding the html inputs, filling them out, and making various assertions.
+
+There are many tests because we want to test error conditions as well. For example, we want to ensure that if we fill out only part of the form we get an error. If we fill out the entire form, the newly created message is displayed afterwards.
+
+If one of the fields was named "summary", then we might have something like the following repeated everywhere within our tests:
+
+[source,java]
+----
+HtmlTextInput summaryInput = createMsgFormPage.getHtmlElementById("summary");
+summaryInput.setValueAttribute("Spring Rocks");
+----
+
+So what happens if we change the id to be "smmry". This means we would have to update all of our tests! Instead we would hope that we wrote a bit more elegant code where filling out the form was in its own method:
+
+[source,java]
+----
+public HtmlPage createMessage(HtmlPage currentPage, String summary, String text) {
+  ...
+  setSummary(currentPage, summary);
+  ...
+}
+
+public void setSummary(HtmlPage currentPage, String summary) {
+  HtmlTextInput summaryInput = currentPage.getHtmlElementById("summary");
+  summaryInput.setValueAttribute(summary);
+}
+----
+
+This ensures that if we change the UI we do not have to update all of our tests.
+
+We might take it a step further and place this logic within an Object that represents the `HtmlPage` we are currently on.
+
+[source,java]
+----
+public class CreateMessagePage {
+  private final HtmlPage currentPage;
+
+  ...
+
+  public T createMessage(Class<T> resultPage, String summary, String text) {
+    ...
+    setSummary(currentPage, summary);
+    ...
+    HtmlPage result = submit.click();
+    ...
+    return (T) error ? new CreateMessagePage(result) : new ViewMessagePage(result);
+  }
+
+  public void setSummary(String summary) {
+    HtmlTextInput summaryInput = currentPage.getHtmlElementById("summary");
+    summaryInput.setValueAttribute(summary);
+  }
+}
+----
+
+Formerly, this pattern is known as the https://code.google.com/p/selenium/wiki/PageObjects[Page Object Pattern]. While we can certainly do this with HtmlUnit, WebDriver provides some tools that we will explore in the following sections make this pattern much easier.
+
+=== Using WebDriver
+
+Now that we have the <<updating-dependencies,correct dependencies>>, we can use WebDriver in our unit tests. Our example assumes you already have JUnit as a dependency. If you have not added it, please update your classpath accordingly. The complete code sample for using WebDriver and Spring MVC Test can be found in https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/java/sample/webdriver/MockMvcHtmlUnitDriverCreateMessageTest.java[MockMvcHtmlUnitDriverCreateMessageTest].
+
+==== Creating MockMvc
+
+In order to use WebDriver and Spring MVC Test we must first create a `MockMvc` instance. There is plenty of documentation on how to create a `MockMvc` instance, but we will review how to create a `MockMvc` instance very quickly in this section.
+
+The first step is to create a new JUnit class that is annotated as shown below:
+
+[source,java]
+----
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {WebMvcConfig.class, MockDataConfig.class})
+@WebAppConfiguration
+public class MockMvcHtmlUnitDriverCreateMessageTest {
+
+  @Autowired
+  private WebApplicationContext context;
+
+  ...
+}
+----
+
+* `@RunWith(SpringJUnit4ClassRunner.class)` allows Spring to perform dependency injection on our `MockMvcHtmlUnitDriverCreateMessageTest`. This is why our `@Autowired` annotations will be honored.
+* `@ContextConfiguration` tells Spring what configuration to load. You will notice that we are loading a mock instance of our data tier to improve the performance of our tests. If we wanted, we could optionally run the tests against a real database. However, this has the disadvantages we https://spring.io/blog/2014/03/19/introducing-spring-test-mvc-htmlunit#integration-testing-to-the-rescue[mentioned previously].
+* `@WebAppConfiguration` indicates to `SpringJUnit4ClassRunner` that it should create a `WebApplicationContext` rather than a `ApplicationContext`.
+
+Next we need to create our `MockMvc` instance from the `context`. An example of how to do this has been provided below:
+
+[source,java]
+----
+@Before
+public void setup() {
+  MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+  ...
+}
+----
+
+Of course this is just one way to create a `MockMvc` instance. We could have decided to http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-server-filters[add a Servlet Filter], use a http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-server-setup-options[Standalone setup], etc. The important thing is that we need an instance of `MockMvc`. For additional information on creating a `MockMvc` instance refer to the http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-framework[Spring MVC Test documentation].
+
+==== Initializing WebDriver
+
+Now that we have created the `MockMvc` instance, we need to create a `MockMvcHtmlUnitDriver` which ensures we use the `MockMvc` instance we created in the previous step.
+
+[source,java]
+----
+private WebDriver driver;
+
+@Before
+public void setup() {
+	MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+	driver = new MockMvcHtmlUnitDriver(mockMvc, true);
+}
+----
+
+==== Using WebDriver
+
+Now we can use WebDriver as we normally would, but without the need to deploy our application. For example, we can request the view to create a message with the following:
+
+[source,java]
+----
+CreateMessagePage messagePage = CreateMessagePage.to(driver);
+----
+
+We can then fill out the form and submit it to create a message.
+
+[source,java]
+----
+ViewMessagePage viewMessagePage =
+    messagePage.createMessage(ViewMessagePage.class, expectedSummary, expectedText);
+----
+
+This improves on the design of our http://spring.io/blog/2014/03/21/spring-mvc-test-with-htmlunit[HtmlUnit test] by leveraging the Page Object Pattern. As we mentioned in <<why-webdriver>>, we could use the Page Object Pattern with HtmlUnit, but it is much easier now. Let's take a look at our `CreateMessagePage`.
+
+[source,java]
+----
+public class CreateMessagePage extends AbstractPage {
+    private WebElement summary;
+
+    private WebElement text;
+
+    @FindBy(css = "input[type=submit]")
+    private WebElement submit;
+
+    public CreateMessagePage(WebDriver driver) {
+        super(driver);
+    }
+
+    public <T> T createMessage(Class<T> resultPage, String summary, String details) {
+        this.summary.sendKeys(summary);
+        this.text.sendKeys(details);
+        this.submit.click();
+        return PageFactory.initElements(driver, resultPage);
+    }
+
+    public static CreateMessagePage to(WebDriver driver) {
+        driver.get("http://localhost:9990/mail/messages/form");
+        return PageFactory.initElements(driver, CreateMessagePage.class);
+    }
+}
+----
+
+The first thing you will notice is that our `CreateMessagePage` extends the `AbstractPage`. We won't go over the details of `AbstractPage`, but in summary it contains all the common functionality of all our pages. For example, if your application has a navigational bar, global error messages, etc. This logic can be placed in a shared location.
+
+The next thing you will find is that we have a member variable for each of the parts of the HTML, `WebElement`, we are interested in. `WebDriver`'s https://code.google.com/p/selenium/wiki/PageFactory[PageFactory] allows us to remove a lot of code from HtmlUnit version of `CreateMessagePage` by automatically resolving each `WebElement`.
+
+The `PageFactory#initElements` method will automatically resolve each `WebElement` by using the field name and trying to look it up by id or name of the element on the HTML page. We can also use the https://code.google.com/p/selenium/wiki/PageFactory#Making_the_Example_Work_Using_Annotations[@FindBy annotation] to override the default. Our example demonstrates how we can use the `@FindBy` annotation to lookup our submit button using the css selector of *input[type=submit]*.
+
+Finally, we can verify that a new message was created successfully
+
+[source,java]
+----
+assertThat(viewMessagePage.getMessage()).isEqualTo(expectedMessage);
+assertThat(viewMessagePage.getSuccess()).isEqualTo("Successfully created a new message");
+----
+
+We can see that our `ViewMessagePage` can return a `Message` object in addition to the individual `Message` properties. This allows us to easily interact with our rich domain objects instead of just a `String`. We can then leverage the rich domain objects in our assertions. We do this by creating a https://github.com/alexruiz/fest-assert-2.x/wiki/Creating-specific-assertions[custom fest assertion] that allows us to verify all the properties of the actual `Message` are equal to the expected `Message`. You can view the details of the custom assertion in https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/java/sample/fest/Assertions.java[Assertions] and https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/java/sample/fest/MessageAssert.java[MessageAssert]
+
+Last, don't forget to close the `WebDriver` instance when we are done.
+
+[source,java]
+----
+@After
+public void destroy() {
+	if(driver != null) {
+		driver.close();
+	}
+}
+----
+
+For additional information on using WebDriver, refer to the https://code.google.com/p/selenium/wiki/GettingStarted[WebDriver documentation].
 
 == Running the sample project
 
