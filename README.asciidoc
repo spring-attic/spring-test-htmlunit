@@ -312,7 +312,7 @@ public void setup() {
 }
 ----
 
-==== Using HtmlUnit
+=== Using HtmlUnit
 
 Now we can use HtmlUnit as we normally would, but without the need to deploy our application. For example, we can request the view to create a message with the following:
 
@@ -357,7 +357,7 @@ For the complete example, please refer to https://github.com/spring-projects/spr
 
 == MockMvc and WebDriver
 
-We have already seen how to use MockMvc with HtmlUnit. In this section, we will leverage additional abstractions within http://docs.seleniumhq.org/projects/webdriver/[WebDriver] to make things even easier.
+In the previous section, we have already seen how to use MockMvc with HtmlUnit. In this section, we will leverage additional abstractions within http://docs.seleniumhq.org/projects/webdriver/[WebDriver] to make things even easier.
 
 === Why WebDriver?
 
@@ -422,10 +422,6 @@ public class CreateMessagePage {
 
 Formerly, this pattern is known as the https://code.google.com/p/selenium/wiki/PageObjects[Page Object Pattern]. While we can certainly do this with HtmlUnit, WebDriver provides some tools that we will explore in the following sections make this pattern much easier.
 
-=== Using WebDriver
-
-Now that we have the <<updating-dependencies,correct dependencies>>, we can use WebDriver in our unit tests. Our example assumes you already have JUnit as a dependency. If you have not added it, please update your classpath accordingly. The complete code sample for using WebDriver and Spring MVC Test can be found in https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/java/sample/webdriver/MockMvcHtmlUnitDriverCreateMessageTest.java[MockMvcHtmlUnitDriverCreateMessageTest].
-
 ==== Creating MockMvc
 
 In order to use WebDriver and Spring MVC Test we must first create a `MockMvc` instance. There is plenty of documentation on how to create a `MockMvc` instance, but we will review how to create a `MockMvc` instance very quickly in this section.
@@ -463,7 +459,7 @@ public void setup() {
 
 Of course this is just one way to create a `MockMvc` instance. We could have decided to http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-server-filters[add a Servlet Filter], use a http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-server-setup-options[Standalone setup], etc. The important thing is that we need an instance of `MockMvc`. For additional information on creating a `MockMvc` instance refer to the http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-framework[Spring MVC Test documentation].
 
-==== Initializing WebDriver
+=== Initializing WebDriver
 
 Now that we have created the `MockMvc` instance, we need to create a `MockMvcHtmlUnitDriver` which ensures we use the `MockMvc` instance we created in the previous step.
 
@@ -478,7 +474,7 @@ public void setup() {
 }
 ----
 
-==== Using WebDriver
+=== Using WebDriver
 
 Now we can use WebDriver as we normally would, but without the need to deploy our application. For example, we can request the view to create a message with the following:
 
