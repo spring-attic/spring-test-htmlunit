@@ -1,11 +1,10 @@
 package sample.webdriver;
 
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -48,21 +47,19 @@ public class MockMvcHtmlUnitDriverCreateMessageTest {
 	@Autowired
 	private Message expectedMessage;
 
-	private static WebDriver driver;
+	private WebDriver driver;
 
 	@Before
 	public void setup() {
-		if (driver == null) {
-			driver = createDriver();
-		}
+		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+		driver = new MockMvcHtmlUnitDriver(mockMvc, true);
 	}
 
-	@AfterClass
-	public static void destroy() {
+	@After
+	public void destroy() {
 		if(driver != null) {
 			driver.close();
 		}
-		driver = null;
 	}
 
 	@Test
@@ -89,11 +86,5 @@ public class MockMvcHtmlUnitDriverCreateMessageTest {
 		ViewMessagePage viewMessagePage = page.createMessage(ViewMessagePage.class, expectedSummary, expectedText);
 		assertThat(viewMessagePage.getMessage()).isEqualTo(expectedMessage);
 		assertThat(viewMessagePage.getSuccess()).isEqualTo("Successfully created a new message");
-	}
-
-	protected WebDriver createDriver() {
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-		return new MockMvcHtmlUnitDriver(mockMvc, true);
-
 	}
 }

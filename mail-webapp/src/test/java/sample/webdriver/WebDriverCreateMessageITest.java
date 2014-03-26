@@ -12,11 +12,17 @@
  */
 package sample.webdriver;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import sample.config.MockDataConfig;
 import sample.data.Message;
 import sample.webdriver.pages.CreateMessagePage;
@@ -41,21 +47,21 @@ import static sample.fest.Assertions.assertThat;
 public class WebDriverCreateMessageITest {
 	private Message expectedMessage = new MockDataConfig().createMessage();
 
-	private static WebDriver driver;
+	@Autowired
+	private WebApplicationContext context;
+
+	private WebDriver driver;
 
 	@Before
 	public void setup() {
-		if (driver == null) {
-			driver = createDriver();
-		}
+		driver = new HtmlUnitDriver(true);
 	}
 
-	@AfterClass
-	public static void destroy() {
+	@After
+	public void destroy() {
 		if(driver != null) {
 			driver.close();
 		}
-		driver = null;
 	}
 
 	@Test
@@ -82,9 +88,5 @@ public class WebDriverCreateMessageITest {
 		ViewMessagePage viewMessagePage = page.createMessage(ViewMessagePage.class, expectedSummary, expectedText);
 		assertThat(viewMessagePage.getMessage()).isEqualToIgnoringGeneratedFields(expectedMessage);
 		assertThat(viewMessagePage.getSuccess()).isEqualTo("Successfully created a new message");
-	}
-
-	protected WebDriver createDriver() {
-		return new HtmlUnitDriver(true);
 	}
 }
