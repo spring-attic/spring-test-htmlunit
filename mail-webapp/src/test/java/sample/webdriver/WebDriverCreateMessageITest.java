@@ -12,7 +12,11 @@
  */
 package sample.webdriver;
 
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import sample.config.MockDataConfig;
 import sample.data.Message;
 import sample.webdriver.pages.CreateMessagePage;
@@ -25,7 +29,7 @@ import static sample.fest.Assertions.assertThat;
 /**
  * <p>
  * An integration test that validates the {@link CreateMessagePage}. Notice that we are able to reuse the same page
- * objects as the {@link MockMvcHtmlUnitDriverCreateMessageTest} and the {@link MockitoMockMvcHtmlUnitDriverCreateMessageTest}.
+ * objects as the {@link MockMvcHtmlUnitDriverCreateMessageTest}.
  * </p>
  * <p>
  * <strong>NOTE</strong> The web application must actually be running for this test to pass.
@@ -33,21 +37,37 @@ import static sample.fest.Assertions.assertThat;
  *
  * @author Rob Winch
  * @see MockMvcHtmlUnitDriverCreateMessageTest
- * @see MockitoMockMvcHtmlUnitDriverCreateMessageTest
  */
-public class WebDriverCreateMessageITest extends AbstractWebDriverTest {
+public class WebDriverCreateMessageITest {
 	private Message expectedMessage = new MockDataConfig().createMessage();
+
+	private static WebDriver driver;
+
+	@Before
+	public void setup() {
+		if (driver == null) {
+			driver = createDriver();
+		}
+	}
+
+	@AfterClass
+	public static void destroy() {
+		if(driver != null) {
+			driver.close();
+		}
+		driver = null;
+	}
 
 	@Test
 	public void missingFieldWithJavascriptValidationDisplaysError() {
-		CreateMessagePage messagePage = CreateMessagePage.to(getDriver());
+		CreateMessagePage messagePage = CreateMessagePage.to(driver);
 		messagePage = messagePage.createMessage(CreateMessagePage.class, "", "");
 		assertThat(messagePage.getErrors()).isEqualTo("This field is required.");
 	}
 
 	@Test
 	public void missingFieldServerSideValidationDisplaysError() {
-		CreateMessagePage messagePage = CreateMessagePage.to(getDriver());
+		CreateMessagePage messagePage = CreateMessagePage.to(driver);
 		messagePage = messagePage.createMessage(CreateMessagePage.class, "Summary", "");
 		assertThat(messagePage.getErrors()).isEqualTo("Message is required.");
 	}
@@ -57,10 +77,14 @@ public class WebDriverCreateMessageITest extends AbstractWebDriverTest {
 		String expectedSummary = expectedMessage.getSummary();
 		String expectedText = expectedMessage.getText();
 
-		CreateMessagePage page = CreateMessagePage.to(getDriver());
+		CreateMessagePage page = CreateMessagePage.to(driver);
 
 		ViewMessagePage viewMessagePage = page.createMessage(ViewMessagePage.class, expectedSummary, expectedText);
 		assertThat(viewMessagePage.getMessage()).isEqualToIgnoringGeneratedFields(expectedMessage);
 		assertThat(viewMessagePage.getSuccess()).isEqualTo("Successfully created a new message");
+	}
+
+	protected WebDriver createDriver() {
+		return new HtmlUnitDriver(true);
 	}
 }
