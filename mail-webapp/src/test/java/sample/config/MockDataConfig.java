@@ -64,8 +64,11 @@ public class MockDataConfig {
 
 	@Bean
 	public Message createMessage() {
+		Calendar created = Calendar.getInstance();
+		// we need to clear out the milliseconds since we are not interested in being that precise
+		created.set(Calendar.MILLISECOND, 0);
 		Message message = new Message();
-		message.setCreated(Calendar.getInstance());
+		message.setCreated(created);
 		message.setId(123L);
 		message.setSummary("Spring Rocks");
 		message.setText("In case you didn't know, Spring Rocks!");

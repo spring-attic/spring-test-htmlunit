@@ -37,17 +37,9 @@ public class MessageAssert extends ObjectAssert {
 		isEqualToIgnoringGeneratedFields(expected);
 		Message expectedMessage = (Message) expected;
 		Message actualMessage = (Message) actual;
-		Calendar expectedCreated = clearMilliseconds(expectedMessage);
 		assertThat(actualMessage.getId()).isEqualTo(expectedMessage.getId());
-		assertThat(actualMessage.getCreated()).isEqualTo(expectedCreated);
+		assertThat(actualMessage.getCreated()).isEqualTo(expectedMessage.getCreated());
 		return this;
-	}
-
-	private Calendar clearMilliseconds(Message expectedMessage) {
-		Calendar expectedCreated = Calendar.getInstance(expectedMessage.getCreated().getTimeZone());
-		expectedCreated.setTime(expectedMessage.getCreated().getTime());
-		expectedCreated.set(Calendar.MILLISECOND, 0); // we don't care about milliseconds
-		return expectedCreated;
 	}
 
 	public MessageAssert isEqualToIgnoringGeneratedFields(Object expected) {
