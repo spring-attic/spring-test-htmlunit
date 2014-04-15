@@ -23,6 +23,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 /**
  * <p>
+ * <strong>NOTE</strong> This is experimental and may be removed at any time.
+ * </p>
+ * <p>
  * A {@link TestExecutionListener} that is intended to automatically inject a {@link MockMvcHtmlUnitDriver} instance in
  * subclasses of GebSpec.
  * </p>
