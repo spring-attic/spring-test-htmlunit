@@ -483,7 +483,7 @@ public class MockMvcHtmlUnitDriverCreateMessageTest {
 ----
 
 * `@RunWith(SpringJUnit4ClassRunner.class)` allows Spring to perform dependency injection on our `MockMvcHtmlUnitDriverCreateMessageTest`. This is why our `@Autowired` annotations will be honored.
-* `@ContextConfiguration` tells Spring what configuration to load. You will notice that we are loading a mock instance of our data tier to improve the performance of our tests. If we wanted, we could optionally run the tests against a real database. However, this has the disadvantages we https://spring.io/blog/2014/03/19/introducing-spring-test-mvc-htmlunit#integration-testing-to-the-rescue[mentioned previously].
+* `@ContextConfiguration` tells Spring what configuration to load. You will notice that we are loading a mock instance of our data tier to improve the performance of our tests. If we wanted, we could optionally run the tests against a real database. However, this has the disadvantages we <<integration-testing-to-the-rescue,mentioned previously>>.
 * `@WebAppConfiguration` indicates to `SpringJUnit4ClassRunner` that it should create a `WebApplicationContext` rather than a `ApplicationContext`.
 
 Next we need to create our `MockMvc` instance from the `context`. An example of how to do this has been provided below:
@@ -590,6 +590,148 @@ public void destroy() {
 ----
 
 For additional information on using WebDriver, refer to the https://code.google.com/p/selenium/wiki/GettingStarted[WebDriver documentation].
+
+
+== MockMvc and Geb
+
+In the previous section, we saw how to use MockMvc with WebDriver. In this section, we will use http://www.gebish.org/[Geb] to make our tests more Groovy.
+
+
+=== Why Geb and MockMvc
+
+Geb is backed by WebDriver, so it offers many of the same benefits we got from WebDriver. However, Geb makes things even easier by taking care of some of the boiler plate code for us. Of course we want to use MockMvc so that we do no need to deploy our code to a server. The easiest way to understand the benefits of using Geb is to jump into an example.
+
+NOTE: Another great feature of Geb is its http://www.gebish.org/manual/current/[exceptional documentation].
+
+=== Using Geb
+
+Once we have the <<updating-dependencies,correct dependencies>>, we can use Geb in our unit tests. The complete code sample for using Geb and Spring MVC Test can be found in https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/groovy/sample/geb/GebCreateMessagesSpec.groovy[GebCreateMessagesSpec].
+
+==== Creating a MockMvc instance
+
+In order to use HtmlUnit and Spring MVC Test we must first create a `MockMvc` instance. There is plenty of documentation on how to create a `MockMvc` instance, but we will review how to create a `MockMvc` instance very quickly in this section.
+
+The first step is to create a new `GebReportingSpec` class that is annotated as shown below:
+
+[source,groovy]
+----
+@ContextConfiguration(classes=[WebMvcConfig,MockDataConfig])
+@WebAppConfiguration
+class GebCreateMessagesSpec extends GebReportingSpec {
+  @Autowired
+  WebApplicationContext context;
+
+  WebDriver driver;
+
+  ...
+}
+----
+
+* For this to work ensure to add the spock-spring dependency as illustrated in the <<updating-dependencies>> section. This is why `@Autowired` annotations will be honored.
+* `@ContextConfiguration` tells Spring what configuration to load. You will notice that we are loading a mock instance of our data tier to improve the performance of our tests. If we wanted, we could optionally run the tests against a real database. However, this has the disadvantages we <<integration-testing-to-the-rescue,mentioned previously>>.
+* `@WebAppConfiguration` indicates that a `WebApplicationContext` should be created rather than a `ApplicationContext`.
+
+Next we need to create our `MockMvc` instance from the `context`. An example of how to do this has been provided below:
+
+[source,groovy]
+----
+def setup() {
+  MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
+  ...
+}
+----
+
+Of course this is just one way to create a `MockMvc` instance. We could have decided to http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-server-filters[add a Servlet Filter], use a http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-server-setup-options[Standalone setup], etc. The important thing is that we need an instance of `MockMvc`. For additional information on creating a `MockMvc` instance refer to the http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-framework[Spring MVC Test documentation].
+
+==== Initializing WebDriver
+
+Now that we have created the `MockMvc` instance, we need to create a `MockMvcHtmlUnitDriver` which ensures we use the `MockMvc` instance we created in the previous step. We then use Geb's http://www.gebish.org/manual/current/driver.html#explicit_lifecycle[explicit lifecycle] and set the driver on Geb's http://www.gebish.org/manual/current/browser.html#the_browser[Browser] instance.
+
+[source,groovy]
+----
+WebDriver driver;
+
+def setup() {
+  MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
+  driver = new MockMvcHtmlUnitDriver(mockMvc, true)
+  browser.driver = driver
+}
+
+def destroy() {
+  if(driver != null) {
+    driver.close();
+  }
+}
+----
+
+==== Using Geb
+
+Now we can use Geb as we normally would, but without the need to deploy our application. For example, we can request the view to create a message with the following:
+
+[source,groovy]
+----
+to CreateMessagePage
+----
+
+We can then fill out the form and submit it to create a message.
+
+[source,groovy]
+----
+form.summary = expectedSummary
+form.text = expectedMessage
+submit.click(ViewMessagePage)
+----
+
+Any unrecognized method calls or property accesses/references that are not found will be forwarded to the current page object. This removes a lot of the boilerplate code we needed when using WebDriver directly.
+
+Additionally, this improves on the design of our http://spring.io/blog/2014/03/21/spring-mvc-test-with-htmlunit[HtmlUnit test]. The most obvious change is that we are now using the Page Object Pattern. As we mentioned in <<why-webdriver>>, we could use the Page Object Pattern with HtmlUnit, but it is much easier now.
+
+Let's take a look at our `CreateMessagePage`.
+
+[source,groovy]
+----
+class CreateMessagePage extends Page {
+  static url = 'messages/form'
+  static at = { assert title == 'Messages : Create'; true }
+  static content =  {
+    submit { $('input[type=submit]') }
+    form { $('form') }
+    errors(required:false) { $('label.error, .alert-error')?.text() }
+  }
+}
+----
+
+The first thing you will notice is that our `CreateMessagePage` extends the `Page`. We won't go over the details of `Page`, but in summary it contains base functionality for all our pages.
+
+The next thing you will notice is that we define a URL in which this page can be found. This allows us to navigate to the page with:
+
+[source,groovy]
+----
+to CreateMessagePage
+----
+
+We also have a closure that determines if we are at the specified page. It should return true if we are on the correct page. This is why we can assert that we are on the correct page with:
+
+NOTE: We use an assertion in the closure, so we can determine where things went wrong if we were at the wrong page.
+
+[source,groovy]
+----
+at CreateMessagePage
+----
+
+We last create a content closure that specifies all the areas of interest within the page. We can use a http://www.gebish.org/manual/current/intro.html#the_jquery_ish_navigator_api[jQuery-ish Navigator API] to select the content we are interested in.
+
+Finally, we can verify that a new message was created successfully
+
+[source,groovy]
+----
+at ViewMessagePage
+success == 'Successfully created a new message'
+id
+date
+summary == expectedSummary
+message == expectedMessage
+----
 
 == Running the sample project
 
