@@ -66,7 +66,8 @@ public class MockDataConfig {
 	public Message createMessage() {
 		Calendar created = Calendar.getInstance();
 		// we need to clear out the milliseconds since we are not interested in being that precise
-		created.set(Calendar.MILLISECOND, 0);
+		created.set(Calendar.MILLISECOND,0);
+		created.getTime().setTime(1397672456000L);
 		Message message = new Message();
 		message.setCreated(created);
 		message.setId(123L);
