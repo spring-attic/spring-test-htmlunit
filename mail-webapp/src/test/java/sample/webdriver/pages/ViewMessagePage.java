@@ -54,7 +54,7 @@ public class ViewMessagePage extends AbstractPage {
 
 	public Calendar getCreated() throws ParseException {
 		Calendar result = Calendar.getInstance();
-		DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.getDefault());
+		DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.ENGLISH);
 		result.setTime(format.parse(created.getText()));
 		return result;
 	}
