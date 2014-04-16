@@ -27,6 +27,7 @@ import sample.data.MessageRepository;
 import sample.data.mock.MockConversionService;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
@@ -64,9 +65,9 @@ public class MockDataConfig {
 
 	@Bean
 	public Message createMessage() {
-		Calendar created = Calendar.getInstance();
+		Calendar created = Calendar.getInstance(Locale.ENGLISH);
 		// we need to clear out the milliseconds since we are not interested in being that precise
-		created.set(Calendar.MILLISECOND,0);
+		created.set(Calendar.MILLISECOND, 0);
 		created.getTime().setTime(1397672456000L);
 		Message message = new Message();
 		message.setCreated(created);
