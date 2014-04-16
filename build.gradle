@@ -183,7 +183,9 @@ configure(rootProject) {
     provided 'javax.servlet:javax.servlet-api:3.0.1'
 
     testCompile 'org.easytesting:fest-assert:1.4',
-          "junit:junit:$junitVersion"
+          "org.springframework:spring-webmvc:$springVersion",
+          "junit:junit:$junitVersion",
+          "org.mockito:mockito-all:1.9.5"
 
   }
 
