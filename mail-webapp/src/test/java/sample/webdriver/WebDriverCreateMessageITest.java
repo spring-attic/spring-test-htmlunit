@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 import sample.config.MockDataConfig;
 import sample.data.Message;
 import sample.webdriver.pages.CreateMessagePage;
+import sample.webdriver.pages.LoginPage;
 import sample.webdriver.pages.ViewMessagePage;
 
 import java.text.ParseException;
@@ -55,6 +56,7 @@ public class WebDriverCreateMessageITest {
 	@Before
 	public void setup() {
 		driver = new HtmlUnitDriver(true);
+		LoginPage.login(driver);
 	}
 
 	@After

@@ -17,14 +17,27 @@ import geb.spock.GebReportingSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.geb.pages.*
 import sample.geb.pages.CreateMessagePage
+import sample.geb.pages.LoginPage
 import sample.geb.pages.ViewMessagePage
+import spock.lang.Stepwise
 
 /**
  *
  * @author Rob Winch
  *
  */
+@Stepwise
 class CreateMessagesISpec extends GebReportingSpec {
+
+	def 'login success'() {
+		setup:
+			to LoginPage
+		when:
+			login()
+			to CreateMessagePage
+		then:
+			at CreateMessagePage
+	}
 
 	def 'missing field with javascript validation displays error'() {
 		setup:

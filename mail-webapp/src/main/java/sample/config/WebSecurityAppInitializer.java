@@ -21,4 +21,7 @@ import org.springframework.security.web.context.AbstractSecurityWebApplicationIn
  * @author Rob Winch
  */
 public class WebSecurityAppInitializer extends AbstractSecurityWebApplicationInitializer {
+    public WebSecurityAppInitializer() {
+        super(WebSecurityConfig.class);
+    }
 }
