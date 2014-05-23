@@ -24,18 +24,27 @@ import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.test.context.web.ServletTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.htmlunit.MockMvcWebConnection;
 import sample.config.MockDataConfig;
 import sample.config.WebMvcConfig;
+import sample.config.WebSecurityConfig;
 import sample.data.Message;
 import sample.data.MessageRepository;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.Filter;
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -44,14 +53,24 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.testSecurityContext;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 /**
  * @author Rob Winch
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {WebMvcConfig.class, MockDataConfig.class})
+@ContextConfiguration(classes = {WebMvcConfig.class, WebSecurityConfig.class, MockDataConfig.class})
 @WebAppConfiguration
+@WithMockUser
+@TestExecutionListeners(listeners={ServletTestExecutionListener.class,
+		DependencyInjectionTestExecutionListener.class,
+		DirtiesContextTestExecutionListener.class,
+		TransactionalTestExecutionListener.class,
+		WithSecurityContextTestExcecutionListener.class})
 public class MockMvcHtmlUnitCreateMessageTest {
+	@Autowired
+	private Filter springSecurityFilterChain;
 
 	@Autowired
 	private WebApplicationContext context;
@@ -60,7 +79,10 @@ public class MockMvcHtmlUnitCreateMessageTest {
 
 	@Before
 	public void setup() {
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+		MockMvc mockMvc = MockMvcBuilders
+				.webAppContextSetup(context)
+				.addFilters(springSecurityFilterChain)
+				.build();
 		webClient = new WebClient();
 		webClient.setWebConnection(new MockMvcWebConnection(mockMvc));
 	}
