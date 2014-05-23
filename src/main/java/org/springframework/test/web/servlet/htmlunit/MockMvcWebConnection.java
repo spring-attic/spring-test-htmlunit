@@ -13,21 +13,25 @@
 package org.springframework.test.web.servlet.htmlunit;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.htmlunit.geb.GebSpecTestExecutionListener;
 import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.util.Assert;
 
 import com.gargoylesoftware.htmlunit.CookieManager;
 import com.gargoylesoftware.htmlunit.WebConnection;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * <p>
@@ -55,6 +59,8 @@ import com.gargoylesoftware.htmlunit.WebResponse;
  * @see GebSpecTestExecutionListener
  */
 public final class MockMvcWebConnection implements WebConnection {
+	private final List<RequestPostProcessor> postProcessors;
+
 	private final CookieManager cookieManager;
 
 	private final Map<String, MockHttpSession> sessions = new HashMap<String, MockHttpSession>();
@@ -62,14 +68,24 @@ public final class MockMvcWebConnection implements WebConnection {
 	private final MockMvc mockMvc;
 
 	public MockMvcWebConnection(MockMvc mockMvc) {
+		this(mockMvc, defaultPostProcessors());
+	}
+
+	public MockMvcWebConnection(MockMvc mockMvc, RequestPostProcessor... postProcessors) {
+		this(mockMvc, Arrays.asList(postProcessors));
+	}
+
+	public MockMvcWebConnection(MockMvc mockMvc, List<RequestPostProcessor> postProcessors) {
 		Assert.notNull(mockMvc, "mockMvc cannot be null");
+		Assert.notNull(postProcessors, "postProcessors cannot be null");
 		this.mockMvc = mockMvc;
 		this.cookieManager = new CookieManager();
+		this.postProcessors = postProcessors;
 	}
 
 	public WebResponse getResponse(WebRequest webRequest) throws IOException {
 		long startTime = System.currentTimeMillis();
-		HtmlUnitRequestBuilder requestBuilder = new HtmlUnitRequestBuilder(sessions, cookieManager, webRequest);
+		RequestBuilder requestBuilder = new HtmlUnitRequestBuilder(postProcessors, sessions, cookieManager, webRequest);
 
 		ResultActions resultActions;
 		try {
@@ -83,4 +99,16 @@ public final class MockMvcWebConnection implements WebConnection {
 
 		return new MockWebResponseBuilder(startTime, webRequest, httpServletResponse).build();
 	}
+
+	private static List<RequestPostProcessor> defaultPostProcessors() {
+		ClassLoader classLoader = MockMvcWebConnection.class.getClassLoader();
+		if(ClassUtils.isPresent(SECURITY_PP_CLASS_NAME, classLoader)) {
+			Class<?> clazz = ClassUtils.resolveClassName(SECURITY_PP_CLASS_NAME, classLoader);
+			Method method = ReflectionUtils.findMethod(clazz, "testSecurityContext");
+			return Arrays.asList((RequestPostProcessor) ReflectionUtils.invokeMethod(method, null));
+		}
+		return Collections.emptyList();
+	}
+
+	private static final String SECURITY_PP_CLASS_NAME = "org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors";
 }
