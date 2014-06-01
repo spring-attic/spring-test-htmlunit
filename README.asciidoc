@@ -175,7 +175,7 @@ Then ensure you have added the dependency:
 
 <!-- necessary only if you are using Geb -->
 <dependency>
-  <groupId>org.gebish/groupId>
+  <groupId>org.gebish</groupId>
   <artifactId>geb-spock</artifactId>
   <version>{geb-version}</version>
   <scope>test</scope>
