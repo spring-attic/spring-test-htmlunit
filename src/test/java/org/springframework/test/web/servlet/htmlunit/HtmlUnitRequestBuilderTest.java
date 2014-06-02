@@ -42,6 +42,7 @@ import com.gargoylesoftware.htmlunit.CookieManager;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import org.springframework.util.AntPathMatcher;
 
 /**
  *
@@ -379,7 +380,7 @@ public class HtmlUnitRequestBuilderTest {
 	public void buildRequestPathInfo() throws Exception {
 		MockHttpServletRequest actualRequest = requestBuilder.buildRequest(servletContext);
 
-		assertThat(actualRequest.getPathInfo()).isEqualTo("/this/here");
+		assertThat(actualRequest.getPathInfo()).isNull();
 	}
 
 	@Test
@@ -389,6 +390,17 @@ public class HtmlUnitRequestBuilderTest {
 		MockHttpServletRequest actualRequest = requestBuilder.buildRequest(servletContext);
 
 		assertThat(actualRequest.getPathInfo()).isNull();
+	}
+
+	@Test
+	public void buildRequestAndAntPathRequestMatcher() throws Exception {
+		webRequest.setUrl(new URL("http://example.com/app/login/authenticate"));
+
+		MockHttpServletRequest actualRequest = requestBuilder.buildRequest(servletContext);
+
+		// verify it is going to work with Spring Security's AntPathRequestMatcher
+		assertThat(actualRequest.getPathInfo()).isNull();
+		assertThat(actualRequest.getServletPath()).isEqualTo("/login/authenticate");
 	}
 
 	@Test

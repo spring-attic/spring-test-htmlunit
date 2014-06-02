@@ -29,11 +29,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ValueConstants;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -114,13 +111,13 @@ final class HtmlUnitRequestBuilder implements RequestBuilder {
 		cookies(result);
 		headers(result);
 		locales(result);
-		pathInfo(uriComponents, result);
+		servletPath(uriComponents, result);
 		params(result, uriComponents);
 		ports(uriComponents, result);
 		result.setProtocol("HTTP/1.1");
 		result.setQueryString(uriComponents.getQuery());
 		result.setScheme(uriComponents.getScheme());
-		result.setServletPath(result.getPathInfo());
+		pathInfo(uriComponents,result);
 
 		for(RequestPostProcessor postProcessor : postProcessors) {
 			result = postProcessor.postProcessRequest(result);
@@ -325,19 +322,23 @@ final class HtmlUnitRequestBuilder implements RequestBuilder {
 		return new Locale(language, country, qualifier);
 	}
 
-	private void pathInfo(MockHttpServletRequest result, String requestPath) {
-		String pathInfo = requestPath.substring(result.getContextPath().length());
-		if ("".equals(pathInfo)) {
-			pathInfo = null;
-		}
-		result.setPathInfo(pathInfo);
+	private void pathInfo(UriComponents uriComponents, MockHttpServletRequest result) {
+		result.setPathInfo(null);
 	}
 
-	private void pathInfo(UriComponents uriComponents, MockHttpServletRequest result) {
+	private void servletPath(MockHttpServletRequest result, String requestPath) {
+		String servletPath = requestPath.substring(result.getContextPath().length());
+		if ("".equals(servletPath)) {
+			servletPath = null;
+		}
+		result.setServletPath(servletPath);
+	}
+
+	private void servletPath(UriComponents uriComponents, MockHttpServletRequest result) {
 		if ("".equals(result.getPathInfo())) {
 			result.setPathInfo(null);
 		}
-		pathInfo(result, uriComponents.getPath());
+		servletPath(result, uriComponents.getPath());
 	}
 
 	private void ports(UriComponents uriComponents, MockHttpServletRequest result) {
