@@ -30,10 +30,12 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.Mergeable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.util.Assert;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -55,7 +57,7 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
  * @author Rob Winch
  * @see MockMvcWebConnection
  */
-final class HtmlUnitRequestBuilder implements RequestBuilder {
+final class HtmlUnitRequestBuilder implements RequestBuilder, Mergeable {
 	private final Map<String, MockHttpSession> sessions;
 
 	private final CookieManager cookieManager;
@@ -343,7 +345,29 @@ final class HtmlUnitRequestBuilder implements RequestBuilder {
 		return uriBldr.build();
 	}
 
-	/**
+    @Override
+    public boolean isMergeEnabled() {
+        return true;
+    }
+
+    @Override
+    public Object merge(Object parent) {
+        if (parent == null) {
+            return this;
+        }
+        if (!(parent instanceof MockHttpServletRequestBuilder)) {
+            throw new IllegalArgumentException("Cannot merge with [" + parent.getClass().getName() + "]");
+        }
+        MockHttpServletRequestBuilder parentBuilder = (MockHttpServletRequestBuilder) parent;
+
+        // cannot apply this to parentBuilder because need a way to override default HttpSession
+        // and don't want to have non-null HttpSession if it was never accessed
+        // see https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/b25c7e783b23d9fb9d15cd77822536282f79e787/src/main/java/org/springframework/test/web/servlet/htmlunit/HtmlUnitRequestBuilder.java#L374
+
+        return this;
+    }
+
+    /**
 	 * An extension to {@link MockHttpServletRequest} that ensures that when a new {@link HttpSession} is created, it is
 	 * added to the managed sessions.
 	 *
