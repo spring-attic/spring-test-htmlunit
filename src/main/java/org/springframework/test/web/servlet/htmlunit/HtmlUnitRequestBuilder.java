@@ -15,8 +15,13 @@ package org.springframework.test.web.servlet.htmlunit;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +34,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.util.Assert;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -58,8 +62,6 @@ final class HtmlUnitRequestBuilder implements RequestBuilder {
 
 	private final WebRequest webRequest;
 
-	private final List<RequestPostProcessor> postProcessors;
-
 	private String contextPath;
 
 	/**
@@ -70,26 +72,11 @@ final class HtmlUnitRequestBuilder implements RequestBuilder {
 	 * @param webRequest The {@link WebRequest} to transform into a {@link MockHttpServletRequest}. Cannot be null.
 	 */
 	public HtmlUnitRequestBuilder(Map<String, MockHttpSession> sessions, CookieManager cookieManager,
-								  WebRequest webRequest) {
-		this(Collections.<RequestPostProcessor>emptyList(), sessions,cookieManager,webRequest);
-	}
-
-	/**
-	 *
-	 * @parm postProcessors The RequestPostProcessor to use
-	 * @param sessions A {@link Map} of the {@link HttpSession#getId()} to currently managed {@link HttpSession}
-	 * objects. Cannot be null.
-	 * @param cookieManager The {@link CookieManager} used for managing {@link HttpSession}'s JSESSIONID cookie.
-	 * @param webRequest The {@link WebRequest} to transform into a {@link MockHttpServletRequest}. Cannot be null.
-	 */
-	public HtmlUnitRequestBuilder(List<RequestPostProcessor> postProcessors, Map<String, MockHttpSession> sessions, CookieManager cookieManager,
 			WebRequest webRequest) {
-		Assert.notNull(postProcessors, "postProcessors cannot be null");
 		Assert.notNull(sessions, "sessions cannot be null");
 		Assert.notNull(cookieManager, "cookieManager");
 		Assert.notNull(webRequest, "webRequest cannot be null");
 
-		this.postProcessors = postProcessors;
 		this.sessions = sessions;
 		this.cookieManager = cookieManager;
 		this.webRequest = webRequest;
@@ -118,10 +105,6 @@ final class HtmlUnitRequestBuilder implements RequestBuilder {
 		result.setQueryString(uriComponents.getQuery());
 		result.setScheme(uriComponents.getScheme());
 		pathInfo(uriComponents,result);
-
-		for(RequestPostProcessor postProcessor : postProcessors) {
-			result = postProcessor.postProcessRequest(result);
-		}
 		return result;
 	}
 
