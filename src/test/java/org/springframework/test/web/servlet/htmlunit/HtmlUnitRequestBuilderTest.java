@@ -13,6 +13,7 @@
 package org.springframework.test.web.servlet.htmlunit;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,12 +37,18 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.htmlunit.HtmlUnitRequestBuilder;
 
 import com.gargoylesoftware.htmlunit.CookieManager;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.AntPathMatcher;
 
 /**
@@ -684,6 +691,77 @@ public class HtmlUnitRequestBuilderTest {
 
 		assertThat(getContextPath()).isEqualTo(expectedContextPath);
 	}
+
+	@Test
+	public void mergeHeader() throws Exception {
+		String headerName = "PARENT";
+		String headerValue = "VALUE";
+		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new HelloController())
+					.defaultRequest(get("/").header(headerName, headerValue))
+					.build();
+
+		assertThat(mockMvc.perform(requestBuilder).andReturn().getRequest().getHeader(headerName)).isEqualTo(headerValue);
+	}
+
+	@Test
+	public void mergeSession() throws Exception {
+		String attrName = "PARENT";
+		String attrValue = "VALUE";
+		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new HelloController())
+				.defaultRequest(get("/").sessionAttr(attrName, attrValue))
+				.build();
+
+		assertThat(mockMvc.perform(requestBuilder).andReturn().getRequest().getSession().getAttribute(attrName)).isEqualTo(attrValue);
+	}
+
+	@Test
+	public void mergeSessionNotInitialized() throws Exception {
+		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new HelloController())
+				.defaultRequest(get("/"))
+				.build();
+
+		assertThat(mockMvc.perform(requestBuilder).andReturn().getRequest().getSession(false)).isNull();
+	}
+
+	@Test
+	public void mergeParameter() throws Exception {
+		String paramName = "PARENT";
+		String paramValue = "VALUE";
+		String paramValue2 = "VALUE2";
+		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new HelloController())
+				.defaultRequest(get("/").param(paramName, paramValue, paramValue2))
+				.build();
+
+		assertThat(mockMvc.perform(requestBuilder).andReturn().getRequest().getParameterValues(paramName)).containsOnly(paramValue, paramValue2);
+	}
+
+	@Test
+	public void mergeCookie() throws Exception {
+		String cookieName = "PARENT";
+		String cookieValue = "VALUE";
+		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new HelloController())
+				.defaultRequest(get("/").cookie(new Cookie(cookieName,cookieValue)))
+				.build();
+
+		Cookie[] cookies = mockMvc.perform(requestBuilder).andReturn().getRequest().getCookies();
+		assertThat(cookies).isNotNull();
+		assertThat(cookies.length).isEqualTo(1);
+		Cookie cookie = cookies[0];
+		assertThat(cookie.getName()).isEqualTo(cookieName);
+		assertThat(cookie.getValue()).isEqualTo(cookieValue);
+	}
+
+	@Test
+	public void mergeRequestAttribute() throws Exception {
+		String attrName = "PARENT";
+		String attrValue = "VALUE";
+		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new HelloController())
+				.defaultRequest(get("/").requestAttr(attrName,attrValue))
+				.build();
+
+		assertThat(mockMvc.perform(requestBuilder).andReturn().getRequest().getAttribute(attrName)).isEqualTo(attrValue);
+	}
+
 
 	private void assertSingleSessionCookie(String expected) {
 		com.gargoylesoftware.htmlunit.util.Cookie jsessionidCookie = cookieManager.getCookie("JSESSIONID");

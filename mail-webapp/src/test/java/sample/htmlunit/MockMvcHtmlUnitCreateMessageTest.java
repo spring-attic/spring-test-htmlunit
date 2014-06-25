@@ -82,6 +82,7 @@ public class MockMvcHtmlUnitCreateMessageTest {
 		MockMvc mockMvc = MockMvcBuilders
 				.webAppContextSetup(context)
 				.addFilters(springSecurityFilterChain)
+				.defaultRequest(get("/").with(testSecurityContext()))
 				.build();
 		webClient = new WebClient();
 		webClient.setWebConnection(new MockMvcWebConnection(mockMvc));

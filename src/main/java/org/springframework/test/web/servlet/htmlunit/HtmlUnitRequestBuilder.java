@@ -25,11 +25,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.Mergeable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import org.springframework.test.web.servlet.SmartRequestBuilder;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.util.Assert;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -51,16 +53,18 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
  * @author Rob Winch
  * @see MockMvcWebConnection
  */
-final class HtmlUnitRequestBuilder implements RequestBuilder {
+final class HtmlUnitRequestBuilder implements RequestBuilder, Mergeable {
 	private final Map<String, MockHttpSession> sessions;
 
 	private final CookieManager cookieManager;
 
 	private final WebRequest webRequest;
 
-	private final List<RequestPostProcessor> postProcessors;
-
 	private String contextPath;
+
+	private RequestBuilder parentBuilder;
+
+	private SmartRequestBuilder parentPostProcessor;
 
 	/**
 	 *
@@ -70,26 +74,11 @@ final class HtmlUnitRequestBuilder implements RequestBuilder {
 	 * @param webRequest The {@link WebRequest} to transform into a {@link MockHttpServletRequest}. Cannot be null.
 	 */
 	public HtmlUnitRequestBuilder(Map<String, MockHttpSession> sessions, CookieManager cookieManager,
-								  WebRequest webRequest) {
-		this(Collections.<RequestPostProcessor>emptyList(), sessions,cookieManager,webRequest);
-	}
-
-	/**
-	 *
-	 * @parm postProcessors The RequestPostProcessor to use
-	 * @param sessions A {@link Map} of the {@link HttpSession#getId()} to currently managed {@link HttpSession}
-	 * objects. Cannot be null.
-	 * @param cookieManager The {@link CookieManager} used for managing {@link HttpSession}'s JSESSIONID cookie.
-	 * @param webRequest The {@link WebRequest} to transform into a {@link MockHttpServletRequest}. Cannot be null.
-	 */
-	public HtmlUnitRequestBuilder(List<RequestPostProcessor> postProcessors, Map<String, MockHttpSession> sessions, CookieManager cookieManager,
 			WebRequest webRequest) {
-		Assert.notNull(postProcessors, "postProcessors cannot be null");
 		Assert.notNull(sessions, "sessions cannot be null");
 		Assert.notNull(cookieManager, "cookieManager");
 		Assert.notNull(webRequest, "webRequest cannot be null");
 
-		this.postProcessors = postProcessors;
 		this.sessions = sessions;
 		this.cookieManager = cookieManager;
 		this.webRequest = webRequest;
@@ -102,6 +91,7 @@ final class HtmlUnitRequestBuilder implements RequestBuilder {
 
 		MockHttpServletRequest result = new HtmlUnitMockHttpServletRequest(servletContext, httpMethod,
 				uriComponents.getPath());
+		parent(result, parentBuilder);
 		result.setServerName(uriComponents.getHost()); // needs to be first for additional headers
 		authType(result);
 		result.setCharacterEncoding(charset);
@@ -119,10 +109,57 @@ final class HtmlUnitRequestBuilder implements RequestBuilder {
 		result.setScheme(uriComponents.getScheme());
 		pathInfo(uriComponents,result);
 
-		for(RequestPostProcessor postProcessor : postProcessors) {
-			result = postProcessor.postProcessRequest(result);
+		return parentPostProcessor == null ? result : parentPostProcessor.postProcessRequest(result);
+	}
+
+	private void parent(MockHttpServletRequest result, RequestBuilder parent) {
+		if(parent == null) {
+			return;
 		}
-		return result;
+		MockHttpServletRequest parentRequest = parent.buildRequest(result.getServletContext());
+
+		// session
+		HttpSession parentSession = parentRequest.getSession(false);
+		if(parentSession != null) {
+			Enumeration<String> attrNames = parentSession.getAttributeNames();
+			while(attrNames.hasMoreElements()) {
+				String attrName = attrNames.nextElement();
+				Object attrValue = parentSession.getAttribute(attrName);
+				result.getSession().setAttribute(attrName, attrValue);
+			}
+		}
+
+		// header
+		Enumeration<String> headerNames = parentRequest.getHeaderNames();
+		while(headerNames.hasMoreElements()) {
+			String attrName = headerNames.nextElement();
+			Enumeration<String> attrValues = parentRequest.getHeaders(attrName);
+			while(attrValues.hasMoreElements()) {
+				String attrValue = attrValues.nextElement();
+				result.addHeader(attrName, attrValue);
+			}
+		}
+
+		// parameter
+		Map<String, String[]> parentParams = parentRequest.getParameterMap();
+		for(Map.Entry<String,String[]> parentParam : parentParams.entrySet()) {
+			String paramName = parentParam.getKey();
+			String[] paramValues = parentParam.getValue();
+			result.addParameter(paramName, paramValues);
+		}
+
+		// cookie
+		Cookie[] parentCookies = parentRequest.getCookies();
+		if(parentCookies != null) {
+			result.setCookies(parentCookies);
+		}
+
+		// request attribute
+		Enumeration<String> parentAttrNames = parentRequest.getAttributeNames();
+		while(parentAttrNames.hasMoreElements()) {
+			String parentAttrName = parentAttrNames.nextElement();
+			result.setAttribute(parentAttrName, parentRequest.getAttribute(parentAttrName));
+		}
 	}
 
 	/**
@@ -194,6 +231,7 @@ final class HtmlUnitRequestBuilder implements RequestBuilder {
 
 	private void cookies(MockHttpServletRequest result) {
 		String cookieHeaderValue = header("Cookie");
+		Cookie[] parentCookies = result.getCookies();
 		List<Cookie> cookies = new ArrayList<Cookie>();
 		if (cookieHeaderValue != null) {
 			StringTokenizer tokens = new StringTokenizer(cookieHeaderValue, "=;");
@@ -211,6 +249,11 @@ final class HtmlUnitRequestBuilder implements RequestBuilder {
 		Set<com.gargoylesoftware.htmlunit.util.Cookie> managedCookies = cookieManager.getCookies(webRequest.getUrl());
 		for (com.gargoylesoftware.htmlunit.util.Cookie cookie : managedCookies) {
 			processCookie(result, cookies, new Cookie(cookie.getName(), cookie.getValue()));
+		}
+		if(parentCookies != null) {
+			for(Cookie cookie : parentCookies) {
+				cookies.add(cookie);
+			}
 		}
 		if (!cookies.isEmpty()) {
 			result.setCookies(cookies.toArray(new Cookie[0]));
@@ -360,7 +403,27 @@ final class HtmlUnitRequestBuilder implements RequestBuilder {
 		return uriBldr.build();
 	}
 
-	/**
+    @Override
+    public boolean isMergeEnabled() {
+        return true;
+    }
+
+    @Override
+    public Object merge(Object parent) {
+        if (parent == null) {
+            return this;
+        }
+		if(parent instanceof RequestBuilder) {
+			this.parentBuilder = (RequestBuilder) parent;
+		}
+        if (parent instanceof SmartRequestBuilder) {
+			this.parentPostProcessor = (SmartRequestBuilder) parent;
+        }
+
+        return this;
+    }
+
+    /**
 	 * An extension to {@link MockHttpServletRequest} that ensures that when a new {@link HttpSession} is created, it is
 	 * added to the managed sessions.
 	 *
