@@ -9,7 +9,7 @@ Rob Winch
 :idseparator: -
 :idprefix:
 :doctype: book
-:selenium-version: 2.40.0
+:selenium-version: 2.42.2
 :spock-version: 0.7-groovy-2.0
 :geb-version: 0.9.2
 

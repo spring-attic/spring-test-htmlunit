@@ -11,10 +11,10 @@ buildscript {
   }
 }
 
-ext.junitVersion ='4.8.2'
-ext.seleniumVersion = '2.40.0'
-ext.springVersion = '4.0.2.RELEASE'
-ext.springSecurityVersion = '4.0.0.M1'
+ext.junitVersion ='4.11'
+ext.seleniumVersion = '2.42.2'
+ext.springVersion = '4.1.0.BUILD-SNAPSHOT'
+ext.springSecurityVersion = '4.0.0.CI-SNAPSHOT'
 
 configure(allprojects) {
   apply plugin: 'java'
@@ -38,7 +38,7 @@ configure(allprojects) {
 
   repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/libs-snapshot' }
   }
 
   configurations.all {
