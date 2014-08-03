@@ -29,6 +29,8 @@ import com.gargoylesoftware.htmlunit.WebConnection;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * Allows {@link MockMvc} to transform a {@link WebRequest} into a {@link WebResponse}. This is the core integration
@@ -46,10 +48,7 @@ import com.gargoylesoftware.htmlunit.WebResponse;
  *
  * ... use webClient as normal ...
  * </pre>
- * <p>
- * Currently the WebConnection assumes that the first path segment is the context root of the application. For example,
- * the URL http://localhost/context/test/this would use /context as the context root.
- * </p>
+ *
  * @author Rob Winch
  * @see MockMvcHtmlUnitDriver
  * @see GebSpecTestExecutionListener
@@ -61,15 +60,39 @@ public final class MockMvcWebConnection implements WebConnection {
 
 	private final MockMvc mockMvc;
 
+	private final String contextPath;
+
+	/**
+	 * Creates a new instance that assumes that the first path segment is the context root of the application. For example,
+	 * the URL http://localhost/context/test/this would use /context as the context root.
+	 *
+	 * @param mockMvc the MockMvc instance to use
+	 */
 	public MockMvcWebConnection(MockMvc mockMvc) {
+		this(mockMvc,null);
+	}
+
+	/**
+	 * Creates a new instance with a specified context root.
+	 *
+	 * @param mockMvc the MockMvc instance to use
+	 * @param contextPath the contextPath to use. The value may be null in which case the first path segment of the URL is turned
+	 * into the contextPath. Otherwise it must conform to {@link HttpServletRequest#getContextPath()} which states it
+	 * can be empty string or it must start with a "/" and not end in a "/".
+	 */
+	public MockMvcWebConnection(MockMvc mockMvc, String contextPath) {
 		Assert.notNull(mockMvc, "mockMvc cannot be null");
+		validateContextPath(contextPath);
+
 		this.mockMvc = mockMvc;
 		this.cookieManager = new CookieManager();
+		this.contextPath = contextPath;
 	}
 
 	public WebResponse getResponse(WebRequest webRequest) throws IOException {
 		long startTime = System.currentTimeMillis();
 		HtmlUnitRequestBuilder requestBuilder = new HtmlUnitRequestBuilder(sessions, cookieManager, webRequest);
+		requestBuilder.setContextPath(contextPath);
 
 		ResultActions resultActions;
 		try {
@@ -82,5 +105,22 @@ public final class MockMvcWebConnection implements WebConnection {
 		MockHttpServletResponse httpServletResponse = resultActions.andReturn().getResponse();
 
 		return new MockWebResponseBuilder(startTime, webRequest, httpServletResponse).build();
+	}
+
+	/**
+	 * Performs validation on the contextPath
+	 *
+	 * @param contextPath the contextPath to validate
+	 */
+	private static void validateContextPath(String contextPath) {
+		if (contextPath == null || "".equals(contextPath)) {
+			return;
+		}
+		if (contextPath.endsWith("/")) {
+			throw new IllegalArgumentException("contextPath cannot end with /. Got '" + contextPath + "'");
+		}
+		if (!contextPath.startsWith("/")) {
+			throw new IllegalArgumentException("contextPath must start with /. Got '" + contextPath + "'");
+		}
 	}
 }
