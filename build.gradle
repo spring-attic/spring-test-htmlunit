@@ -16,6 +16,8 @@ ext.seleniumVersion = '2.42.2'
 ext.springVersion = '4.1.0.BUILD-SNAPSHOT'
 ext.springSecurityVersion = '4.0.0.CI-SNAPSHOT'
 
+ext.coreModuleProjects = [rootProject]
+
 configure(allprojects) {
   apply plugin: 'java'
   apply plugin: 'eclipse-wtp'
@@ -204,11 +206,11 @@ configure(rootProject) {
     options.links(
       'http://docs.jboss.org/jbossas/javadoc/4.0.5/connector'
     )
-    source subprojects.collect { project ->
+    source coreModuleProjects.collect { project ->
       project.sourceSets.main.allJava
     }
     destinationDir = new File(buildDir, "api")
-    classpath = files(subprojects.collect { project ->
+    classpath = files(coreModuleProjects.collect { project ->
       project.sourceSets.main.compileClasspath
     })
     maxMemory = '1024m'
@@ -218,7 +220,7 @@ configure(rootProject) {
     group = 'Distribution'
     classifier = 'docs'
     description = "Builds -${classifier} archive containing api and reference " +
-      "for deployment at static.springframework.org/spring-framework/docs."
+      "for deployment at docs.spring.io"
 
     from (api) {
       into 'api'
@@ -245,7 +247,7 @@ configure(rootProject) {
       into "${baseDir}/docs"
     }
 
-    allprojects.each { project ->
+    coreModuleProjects.each { project ->
       into ("${baseDir}/libs") {
         from project.jar
         if (project.tasks.findByPath('sourcesJar')) {
