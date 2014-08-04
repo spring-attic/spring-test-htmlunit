@@ -13,15 +13,11 @@
 package sample.webdriver;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import sample.config.MockDataConfig;
 import sample.data.Message;
@@ -36,16 +32,16 @@ import static sample.fest.Assertions.assertThat;
 /**
  * <p>
  * An integration test that validates the {@link CreateMessagePage}. Notice that we are able to reuse the same page
- * objects as the {@link MockMvcHtmlUnitDriverCreateMessageTest}.
+ * objects as the {@link MockMvcHtmlUnitDriverCreateMessageTests}.
  * </p>
  * <p>
  * <strong>NOTE</strong> The web application must actually be running for this test to pass.
  * </p>
  *
  * @author Rob Winch
- * @see MockMvcHtmlUnitDriverCreateMessageTest
+ * @see MockMvcHtmlUnitDriverCreateMessageTests
  */
-public class WebDriverCreateMessageITest {
+public class WebDriverCreateMessageITests {
 	private Message expectedMessage = new MockDataConfig().createMessage();
 
 	@Autowired

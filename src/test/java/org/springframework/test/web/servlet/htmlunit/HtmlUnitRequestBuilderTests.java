@@ -56,7 +56,7 @@ import org.springframework.util.AntPathMatcher;
  * @author Rob Winch
  *
  */
-public class HtmlUnitRequestBuilderTest {
+public class HtmlUnitRequestBuilderTests {
 	private WebRequest webRequest;
 
 	private ServletContext servletContext;

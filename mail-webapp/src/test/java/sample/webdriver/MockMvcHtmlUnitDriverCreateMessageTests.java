@@ -27,7 +27,7 @@ import static sample.fest.Assertions.assertThat;
  * An end to end test that validates the {@link CreateMessagePage}. A few things to notice:
  *
  * <ul>
- * <li>You will see that all the tests are the same as {@link WebDriverCreateMessageITest}. This shows how little difference
+ * <li>You will see that all the tests are the same as {@link WebDriverCreateMessageITests}. This shows how little difference
  * there is in how you would write the tests.</li>
  * <li>The only difference is how we initialize our {@link WebDriver}</li>
  * <li>We do not need to run the web application on a server for this test since we are using
@@ -40,7 +40,7 @@ import static sample.fest.Assertions.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {WebMvcConfig.class, MockDataConfig.class})
 @WebAppConfiguration
-public class MockMvcHtmlUnitDriverCreateMessageTest {
+public class MockMvcHtmlUnitDriverCreateMessageTests {
 	@Autowired
 	private WebApplicationContext context;
 

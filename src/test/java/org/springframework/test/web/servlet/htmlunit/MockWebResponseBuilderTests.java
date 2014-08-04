@@ -30,7 +30,7 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
  *
  * @author Rob Winch
  */
-public class MockWebResponseBuilderTest {
+public class MockWebResponseBuilderTests {
 
 	private WebRequest webRequest;
 

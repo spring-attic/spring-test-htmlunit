@@ -48,7 +48,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @WebAppConfiguration
 @WithMockUser
 @DefaultSecurityTestExecutionListeners
-public class MockMvcHtmlUnitCreateMessageTest {
+public class MockMvcHtmlUnitCreateMessageTests {
 
 	@Autowired
 	private WebApplicationContext context;
