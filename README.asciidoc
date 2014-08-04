@@ -361,7 +361,7 @@ Now we can use HtmlUnit as we normally would, but without the need to deploy our
 HtmlPage createMsgFormPage = webClient.getPage("http://localhost/mail/messages/form");
 ----
 
-NOTE: The first path segment, `/mail`, after the host is treated as the context root. A context root of `/` is not currently supported See https://github.com/spring-projects/spring-test-mvc-htmlunit/issues/20[spring-test-mvc-htmlunit/issues/20] to get updates about this.
+NOTE: The first path segment, `/mail`, after the host is treated as the context root. Alternatively, we could have passed in an optional second argument to `MockMvcWebConnection` to specify a context root of "".
 
 We can then fill out the form and submit it to create a message.
 
