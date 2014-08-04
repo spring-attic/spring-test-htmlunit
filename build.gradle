@@ -122,7 +122,7 @@ project("mail-webapp") {
     stopKey = tomcatStopKey
   }
 
-  description = 'Spring Test MVC HtmlUnit Sample'
+  description = 'Spring MVC Test HtmlUnit Sample'
 
   tasks.findByPath("artifactoryPublish")?.enabled = false
 
@@ -175,7 +175,7 @@ project("mail-webapp") {
 }
 
 configure(rootProject) {
-  description = 'Provides integration between Spring Test MVC and htmlunit'
+  description = 'Provides integration between Spring MVC Test and HtmlUnit'
 
   dependencies {
     compile "org.springframework:spring-test:$springVersion",

@@ -1,4 +1,4 @@
-= Spring MockMvc HtmlUnit
+= Spring MVC Test HtmlUnit
 Rob Winch
 1.0.0.BUILD-SNAPSHOT
 :toc:
@@ -13,7 +13,7 @@ Rob Winch
 :spock-version: 0.7-groovy-2.0
 :geb-version: 0.9.2
 
-This project's aim is to provide integration between http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-framework[Spring MVC Test] and http://htmlunit.sourceforge.net/[HtmlUnit]. This simplifies performing end to end testing when using HTML based views. Spring Test MVC HtmlUnit enables developers to:
+This project's aim is to provide integration between http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-framework[Spring MVC Test Framework] and http://htmlunit.sourceforge.net/[HtmlUnit]. This simplifies performing end to end testing when using HTML based views. Spring MVC Test HtmlUnit enables developers to:
 
 * Easily test pages using tools (i.e. http://htmlunit.sourceforge.net/[HtmlUnit], http://seleniumhq.org/projects/webdriver/[WebDriver], & http://www.gebish.org/manual/current/testing.html#spock_junit__testng[Geb]) that we already use for integration testing without starting an application server
 * Support testing of JavaScript
@@ -23,7 +23,7 @@ NOTE: MockMvc will work with templating technologies that do not rely on a Servl
 
 == Why Spring Test MockMvc HtmlUnit?
 
-The most obvious question that comes to mind is "Why do I need this?" The answer is best found by exploring a very basic https://github.com/spring-projects/spring-test-mvc-htmlunit/tree/master/mail-webapp[sample application]. Assume you have a Spring MVC web application that allows CRUD operations on a https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/main/sample/data/Message.java[Message] object. The application also allows paging through all messages. How would you go about testing it?
+The most obvious question that comes to mind is "Why do I need this?" The answer is best found by exploring a very basic https://github.com/spring-projects/spring-test-htmlunit/tree/master/mail-webapp[sample application]. Assume you have a Spring MVC web application that allows CRUD operations on a https://github.com/spring-projects/spring-test-htmlunit/blob/master/mail-webapp/src/main/sample/data/Message.java[Message] object. The application also allows paging through all messages. How would you go about testing it?
 
 With Spring MVC Test, we can easily test if we are able to create a `Message`.
 
@@ -111,9 +111,9 @@ To set these tests up we would need to ensure our database contained the proper 
 
 These problems do not mean that we should abandon integration testing all together. Instead, we can reduce the number of integration tests by moving our detailed tests to use mock services which will perform much faster. We can then use fewer integration tests that validate simple workflows to ensure that everything works together properly.
 
-=== Enter Spring Test MVC HtmlUnit
+=== Enter Spring MVC Test HtmlUnit
 
-So how can we provide a balance between testing the interactions of our pages and still get performance? I'm sure you already guessed it...Spring Test MVC HtmlUnit will allow us to:
+So how can we provide a balance between testing the interactions of our pages and still get performance? I'm sure you already guessed it...Spring MVC Test HtmlUnit will allow us to:
 
 * Easily test our pages using tools (i.e. HtmlUnit, WebDriver, & Geb) that we already use for integration testing without starting an application server
 * Support testing of JavaScript
@@ -207,7 +207,7 @@ Then ensure you have added the dependency:
 ----
 <dependency>
   <groupId>org.springframework</groupId>
-  <artifactId>spring-test-mvc-htmlunit</artifactId>
+  <artifactId>spring-test-htmlunit</artifactId>
   <version>1.0.0.BUILD-SNAPSHOT</version>
   <scope>test</scope>
 </dependency>
@@ -283,7 +283,7 @@ Then ensure you have added the dependency:
 [subs="verbatim,attributes"]
 ----
 dependencies {
-  testCompile 'org.springframework:spring-test-mvc-htmlunit:1.0.0.BUILD-SNAPSHOT'
+  testCompile 'org.springframework:spring-test-htmlunit:1.0.0.BUILD-SNAPSHOT'
 
   // necessary only if you are using WebDriver
   testCompile "org.seleniumhq.selenium:selenium-htmlunit-driver:{selenium-version}"
@@ -296,7 +296,7 @@ dependencies {
 
 == MockMvc and HtmlUnit
 
-Now that we have the <<updating-dependencies,correct dependencies>>, we can use HtmlUnit in our unit tests. Our example assumes you already have JUnit as a dependency. If you have not added it, please update your classpath accordingly. The complete code sample for using HtmlUnit and Spring MVC Test can be found in https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/java/sample/htmlunit/MockMvcHtmlUnitCreateMessageTest.java[MockMvcHtmlUnitCreateMessageTest].
+Now that we have the <<updating-dependencies,correct dependencies>>, we can use HtmlUnit in our unit tests. Our example assumes you already have JUnit as a dependency. If you have not added it, please update your classpath accordingly. The complete code sample for using HtmlUnit and Spring MVC Test can be found in https://github.com/spring-projects/spring-test-htmlunit/blob/master/mail-webapp/src/test/java/sample/htmlunit/MockMvcHtmlUnitCreateMessageTest.java[MockMvcHtmlUnitCreateMessageTest].
 
 === Creating MockMvc
 
@@ -575,7 +575,7 @@ assertThat(viewMessagePage.getMessage()).isEqualTo(expectedMessage);
 assertThat(viewMessagePage.getSuccess()).isEqualTo("Successfully created a new message");
 ----
 
-We can see that our `ViewMessagePage` can return a `Message` object in addition to the individual `Message` properties. This allows us to easily interact with our rich domain objects instead of just a `String`. We can then leverage the rich domain objects in our assertions. We do this by creating a https://github.com/alexruiz/fest-assert-2.x/wiki/Creating-specific-assertions[custom fest assertion] that allows us to verify all the properties of the actual `Message` are equal to the expected `Message`. You can view the details of the custom assertion in https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/java/sample/fest/Assertions.java[Assertions] and https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/java/sample/fest/MessageAssert.java[MessageAssert]
+We can see that our `ViewMessagePage` can return a `Message` object in addition to the individual `Message` properties. This allows us to easily interact with our rich domain objects instead of just a `String`. We can then leverage the rich domain objects in our assertions. We do this by creating a https://github.com/alexruiz/fest-assert-2.x/wiki/Creating-specific-assertions[custom fest assertion] that allows us to verify all the properties of the actual `Message` are equal to the expected `Message`. You can view the details of the custom assertion in https://github.com/spring-projects/spring-test-htmlunit/blob/master/mail-webapp/src/test/java/sample/fest/Assertions.java[Assertions] and https://github.com/spring-projects/spring-test-htmlunit/blob/master/mail-webapp/src/test/java/sample/fest/MessageAssert.java[MessageAssert]
 
 Last, don't forget to close the `WebDriver` instance when we are done.
 
@@ -605,7 +605,7 @@ NOTE: Another great feature of Geb is its http://www.gebish.org/manual/current/[
 
 === Using Geb
 
-Once we have the <<updating-dependencies,correct dependencies>>, we can use Geb in our unit tests. The complete code sample for using Geb and Spring MVC Test can be found in https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/groovy/sample/geb/GebCreateMessagesSpec.groovy[GebCreateMessagesSpec].
+Once we have the <<updating-dependencies,correct dependencies>>, we can use Geb in our unit tests. The complete code sample for using Geb and Spring MVC Test can be found in https://github.com/spring-projects/spring-test-htmlunit/blob/master/mail-webapp/src/test/groovy/sample/geb/GebCreateMessagesSpec.groovy[GebCreateMessagesSpec].
 
 ==== Creating a MockMvc instance
 
@@ -735,7 +735,7 @@ message == expectedMessage
 
 == Running the sample project
 
-The following provides information on setting up a development environment that can run https://github.com/spring-projects/spring-test-mvc-htmlunit/tree/master/mail-webapp[the sample] in http://www.springsource.org/sts[Spring Tool Suite 3.0.0]. Other IDE's should work using Gradle's IDE support, but have not been tested.
+The following provides information on setting up a development environment that can run https://github.com/spring-projects/spring-test-htmlunit/tree/master/mail-webapp[the sample] in http://www.springsource.org/sts[Spring Tool Suite 3.0.0]. Other IDE's should work using Gradle's IDE support, but have not been tested.
 
 * IDE Setup
 ** Install Spring Tool Suite 3.0.0+
@@ -762,7 +762,7 @@ The project should work with Spring 3.2.0+, but use with Spring 4.0 is encourage
 
 == Contributing
 
-Before contributing or logging an issue please be sure to the issue does not already exist in this project's https://github.com/SpringSource/spring-test-mvc-htmlunit/issues[issue tracking]. If one does not exist, please create an issue.
+Before contributing or logging an issue please be sure to the issue does not already exist in this project's https://github.com/SpringSource/spring-test-htmlunit/issues[issue tracking]. If one does not exist, please create an issue.
 
 If you see anything you'd like to change we encourage taking advantage of github's social coding features by making the change in a http://help.github.com/forking/[fork of this repository] and sending a pull request.
 
@@ -770,4 +770,4 @@ Before we accept a non-trivial patch or pull request we will need you to sign th
 
 == License
 
-The Spring Test MVC HtmlUnit project is available under version 2.0 of the http://www.apache.org/licenses/LICENSE-2.0[Apache License].
+The Spring MVC Test HtmlUnit project is available under version 2.0 of the http://www.apache.org/licenses/LICENSE-2.0[Apache License].
