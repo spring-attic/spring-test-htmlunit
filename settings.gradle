@@ -1,3 +1,4 @@
-rootProject.name = 'spring-test-htmlunit'
+rootProject.name = 'spring-test-htmlunit-build'
 
+include 'spring-test-htmlunit'
 include 'mail-webapp'
