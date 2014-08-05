@@ -5,7 +5,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath("org.springframework.build.gradle:propdeps-plugin:0.0.6-SNAPSHOT")
+    classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
     classpath('me.champeau.gradle:gradle-javadoc-hotfix-plugin:0.1')
     classpath('org.gradle.api.plugins:gradle-tomcat-plugin:1.2.2')
   }
@@ -54,8 +54,8 @@ configure(allprojects) {
 
   idea {
     module {
-      scopes.PROVIDED.plus += configurations.provided
-      scopes.PROVIDED.plus += configurations.optional
+      scopes.PROVIDED.plus += [configurations.provided]
+      scopes.PROVIDED.plus += [configurations.optional]
     }
   }
   // servlet-api (2.5) and tomcat-servlet-api (3.0) classpath entries should not be
@@ -267,7 +267,7 @@ configure(rootProject) {
 
   task wrapper(type: Wrapper) {
     description = 'Generates gradlew[.bat] scripts'
-    gradleVersion = '1.11'
+    gradleVersion = '2.0'
   }
 }
 
