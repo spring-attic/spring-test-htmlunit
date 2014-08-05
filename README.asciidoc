@@ -21,7 +21,7 @@ This project's aim is to provide integration between http://docs.spring.io/sprin
 
 NOTE: MockMvc will work with templating technologies that do not rely on a Servlet Container (i.e. Thymeleaf, Freemarker, Velocity, etc). It does not work with JSPs since they rely on the Servlet Container.
 
-== Why Spring Test MockMvc HtmlUnit?
+== Why Spring MVC Test HtmlUnit?
 
 The most obvious question that comes to mind is "Why do I need this?" The answer is best found by exploring a very basic https://github.com/spring-projects/spring-test-htmlunit/tree/master/mail-webapp[sample application]. Assume you have a Spring MVC web application that allows CRUD operations on a https://github.com/spring-projects/spring-test-htmlunit/blob/master/mail-webapp/src/main/sample/data/Message.java[Message] object. The application also allows paging through all messages. How would you go about testing it?
 
