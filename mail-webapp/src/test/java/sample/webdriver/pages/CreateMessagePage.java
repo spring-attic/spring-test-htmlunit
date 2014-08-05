@@ -44,7 +44,7 @@ public class CreateMessagePage extends AbstractPage {
     }
 
     public static CreateMessagePage to(WebDriver driver) {
-        driver.get("http://localhost:9990/mail/messages/form");
+        get(driver, "messages/form");
         return PageFactory.initElements(driver, CreateMessagePage.class);
     }
 }

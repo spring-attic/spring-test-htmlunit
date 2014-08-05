@@ -42,7 +42,7 @@ public class LoginPage extends AbstractPage {
     }
 
     public static void login(WebDriver driver) {
-        driver.get("http://localhost:9990/mail/login");
+        get(driver, "login");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.login("user","password");
     }

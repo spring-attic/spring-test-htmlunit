@@ -107,22 +107,29 @@ project("mail-webapp") {
   apply plugin: 'war'
   apply plugin: 'tomcat'
 
-  ext {
-    tomcatStopPort = 9876
-    tomcatStopKey = 'stopKey'
-  }
-
   task integrationTomcatRunWar(type: org.gradle.api.plugins.tomcat.tasks.TomcatRunWar, dependsOn: war) {
     contextPath = '/mail'
-    httpPort = 9990
-    stopPort = tomcatStopPort
-    stopKey = tomcatStopKey
     daemon = true
+    doFirst {
+      // delay reserving ports to ensure they are still available
+      def ports = reservePorts(3)
+      httpPort = ports[0]
+      ajpPort = ports[1]
+      stopPort = ports[2]
+    }
   }
 
   task integrationTomcatStop(type: org.gradle.api.plugins.tomcat.tasks.TomcatStop, dependsOn: war) {
-    stopPort = tomcatStopPort
-    stopKey = tomcatStopKey
+    doFirst {
+      stopPort = integrationTomcatRunWar.stopPort
+    }
+  }
+  test {
+    doFirst {
+      def host = 'localhost:' + integrationTomcatRunWar.httpPort
+      systemProperties['geb.build.baseUrl'] = 'http://' + host + integrationTomcatRunWar.contextPath + '/'
+      systemProperties['geb.build.reportsDir'] = 'build/geb-reports'
+    }
   }
 
   description = 'Spring MVC Test HtmlUnit Sample'
@@ -299,4 +306,14 @@ configure(rootProject) {
     description = 'Generates gradlew[.bat] scripts'
     gradleVersion = '2.0'
   }
+}
+
+def reservePorts(int count) {
+    def sockets = []
+    for(int i in 1..count) {
+        sockets << new ServerSocket(0)
+    }
+    def result = sockets*.localPort
+    sockets*.close()
+    result
 }
