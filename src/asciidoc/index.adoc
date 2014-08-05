@@ -1,14 +1,5 @@
 = Spring MVC Test HtmlUnit
 Rob Winch
-1.0.0.BUILD-SNAPSHOT
-:toc:
-:toc-placement: preamble
-:sectanchors:
-:icons: font
-:source-highlighter: prettify
-:idseparator: -
-:idprefix:
-:doctype: book
 :selenium-version: 2.42.2
 :spock-version: 0.7-groovy-2.0
 :geb-version: 0.9.2

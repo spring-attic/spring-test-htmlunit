@@ -8,6 +8,7 @@ buildscript {
     classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
     classpath('me.champeau.gradle:gradle-javadoc-hotfix-plugin:0.1')
     classpath('org.gradle.api.plugins:gradle-tomcat-plugin:1.2.2')
+    classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.3'
   }
 }
 
@@ -177,7 +178,32 @@ project("mail-webapp") {
 }
 
 configure(rootProject) {
+  apply plugin: 'org.asciidoctor.gradle.asciidoctor'
+
   description = 'Provides integration between Spring MVC Test and HtmlUnit'
+
+  asciidoctorj {
+    version = '1.5.0.preview.7'
+  }
+  asciidoctor {
+    options = [
+      eruby: 'erubis',
+      attributes: [
+        toc : '',
+        'toc-placement' : 'preamble',
+        copycss : '',
+        icons : 'font',
+        'source-highlighter': 'prettify',
+        sectanchors : '',
+        idprefix: '',
+        idseparator: '-',
+        doctype: 'book',
+        numbered: '',
+        revnumber : project.version
+      ]
+    ]
+  }
+  build.dependsOn asciidoctor
 
   dependencies {
     compile "org.springframework:spring-test:$springVersion",
@@ -225,6 +251,10 @@ configure(rootProject) {
     from (api) {
       into 'api'
     }
+
+    from (asciidoctor) {
+        into 'reference'
+    }
   }
 
   task distZip(type: Zip, dependsOn: [docsZip]) {
@@ -270,4 +300,3 @@ configure(rootProject) {
     gradleVersion = '2.0'
   }
 }
-
