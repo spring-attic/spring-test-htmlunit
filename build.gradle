@@ -11,7 +11,9 @@ buildscript {
     classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.3'
   }
 }
-
+ext.releaseBuild = version.endsWith('RELEASE')
+ext.snapshotBuild = version.endsWith('SNAPSHOT')
+ext.milestoneBuild = !(releaseBuild || snapshotBuild)
 ext.junitVersion ='4.11'
 ext.seleniumVersion = '2.42.2'
 ext.springVersion = '4.1.0.BUILD-SNAPSHOT'
@@ -150,7 +152,11 @@ configure(rootProject) {
                     idseparator: '-',
                     doctype: 'book',
                     numbered: '',
-                    revnumber : project.version
+                    revnumber : project.version,
+                    version : project.version,
+                    snapshot : snapshotBuild,
+                    release : releaseBuild,
+                    milestone : milestoneBuild
             ]
     ]
   }

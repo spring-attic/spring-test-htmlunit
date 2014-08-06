@@ -114,37 +114,55 @@ So how can we provide a balance between testing the interactions of our pages an
 
 Here is an outline to getting started quickly.
 
+* <<running-the-sample-project>> - Try out working samples!
+* Select your method of integration
+** <<mockmvc-and-htmlunit>> - Use this option if you want the raw libraries
+** <<mockmvc-and-webdriver>> - Use this option to ease development and be able to reuse code between integration and end-to-end testing.
+** <<mockmvc-and-geb>> - Use this option if you like using Groovy for testing, would like to ease development, and be able to reuse code between integration and end-to-end testing.
 * <<updating-dependencies>>
 ** <<building-with-maven>>
 ** <<building-with-gradle>>
-* <<mockmvc-and-htmlunit>>
-* <<mockmvc-and-webdriver>>
-* <<running-the-sample-project>>
 
-=== Updating Dependencies
+== Updating Dependencies
 
 Before you use the project, you must ensure to update your dependencies. Instructions for building with Maven and Gradle have been provided below:
 
  * <<building-with-maven>>
  * <<building-with-gradle>>
 
-==== Building with Maven
+=== Building with Maven
 
 The project is available in the https://github.com/SpringSource/spring-framework/wiki/SpringSource-repository-FAQ[Spring Maven Repository]. If you are using Maven, you will want to make the following updates.
 
-**Using the latest Milestone in Maven**
+ifeval::[{snapshot} == true]
+When using a snapshot version, you need to ensure you have included the Spring Snapshot repository.
 
-If you want the latest milestone, ensure you have the following repository in your pom.xml:
+[source,xml]
+----
+<repository>
+  <id>spring-snapshot</id>
+  <url>https://repo.spring.io/libs-snapshot</url>
+</repository>
+----
+endif::[]
+
+ifeval::[{milestone} == true]
+When using a milestone version, you need to ensure you have included the Spring Milestone repository.
 
 [source,xml]
 ----
 <repository>
   <id>spring-milestone</id>
-  <url>https://repo.spring.io/milestone</url>
+  <url>https://repo.spring.io/libs-milestone</url>
 </repository>
 ----
+endif::[]
 
-Then ensure you have added the dependency:
+ifeval::[{milestone} == true]
+Stable releases are included in Maven Central, so generally you do not need to include any additional repositories.
+endif::[]
+
+Then ensure you have added the dependencies:
 
 [source,xml]
 [subs="verbatim,attributes"]
@@ -152,7 +170,7 @@ Then ensure you have added the dependency:
 <dependency>
   <groupId>org.springframework</groupId>
   <artifactId>spring-test-mvc-htmlunit</artifactId>
-  <version>1.0.0.M1</version>
+  <version>{project-version}</version>
   <scope>test</scope>
 </dependency>
 
@@ -179,102 +197,52 @@ Then ensure you have added the dependency:
 </dependency>
 ----
 
-**Using the latest Snapshot in Maven**
-
-If you want the latest snapshot, ensure you have the following repository in your pom.xml:
-
-[source,xml]
-----
-<repository>
-  <id>spring-snapshot</id>
-  <url>https://repo.spring.io/snapshot</url>
-</repository>
-----
-
-Then ensure you have added the dependency:
-
-[source,xml]
-[subs="verbatim,attributes"]
-----
-<dependency>
-  <groupId>org.springframework</groupId>
-  <artifactId>spring-test-htmlunit</artifactId>
-  <version>1.0.0.BUILD-SNAPSHOT</version>
-  <scope>test</scope>
-</dependency>
-
-<!-- necessary only if you are using WebDriver -->
-<dependency>
-  <groupId>org.seleniumhq.selenium</groupId>
-  <artifactId>selenium-htmlunit-driver</artifactId>
-  <version>{selenium-version}</version>
-  <scope>test</scope>
-</dependency>
-
-<!-- necessary only if you are using Geb -->
-<dependency>
-  <groupId>org.gebish</groupId>
-  <artifactId>geb-spock</artifactId>
-  <version>{geb-version}</version>
-  <scope>test</scope>
-</dependency>
-<dependency>
-  <groupId>org.spockframework</groupId>
-  <artifactId>spock-spring</artifactId>
-  <version>{spock-version}</version>
-  <scope>test</scope>
-</dependency>
-----
-==== Building with Gradle
+=== Building with Gradle
 
 The project is available in the https://github.com/SpringSource/spring-framework/wiki/SpringSource-repository-FAQ[Spring Maven Repository]. If you are using Gradle, you will want to make the following updates.
 
-**Using the latest Milestone in Gradle**
 
-If you want the latest milestone, ensure you have the following repository in your pom.xml:
+ifeval::[{snapshot} == true]
+If you want to use the latest snapshot, ensure you include the Spring Snapshot repository in your build.gradle:
 
 [source,groovy]
 ----
 repositories {
-  maven { url 'https://repo.spring.io/milestone' }
+  maven { url 'https://repo.spring.io/libs-snapshot' }
 }
 ----
+endif::[]
 
-Then ensure you have added the dependency:
+ifeval::[{milestone} == true]
+If you want the latest milestone, ensure you include the Spring Milestone repository in your build.gradle:
+
+[source,groovy]
+----
+repositories {
+  maven { url 'https://repo.spring.io/libs-milestone' }
+}
+----
+endif::[]
+
+
+ifeval::[{milestone} == true]
+If you want the latest release, ensure you include the Maven Central repository in your build.gradle:
+
+[source,groovy]
+----
+repositories {
+  mavenCentral()
+}
+----
+endif::[]
+
+Then ensure you have added the necessary dependencies:
 
 [source,groovy]
 [subs="verbatim,attributes"]
 ----
 dependencies {
-  testCompile 'org.springframework:spring-test-mvc-htmlunit:1.0.0.M1'
-
-  // necessary only if you are using WebDriver
-  testCompile "org.seleniumhq.selenium:selenium-htmlunit-driver:{selenium-version}"
-
-  // necessary only if you are using Geb
-  testCompile "org.gebish:geb-spock:{geb-version}"
-  testCompile "org.spockframework:spock-spring:{spock-version}"
-}
-----
-
-**Using the latest Snapshot in Gradle**
-
-If you want the latest snapshot, ensure you have the following repository in your pom.xml:
-
-[source,groovy]
-----
-repositories {
-  maven { url 'https://repo.spring.io/snapshot' }
-}
-----
-
-Then ensure you have added the dependency:
-
-[source,groovy]
-[subs="verbatim,attributes"]
-----
-dependencies {
-  testCompile 'org.springframework:spring-test-htmlunit:1.0.0.BUILD-SNAPSHOT'
+  testCompile 'org.springframework:spring-test-htmlunit:{project-version}'
 
   // necessary only if you are using WebDriver
   testCompile "org.seleniumhq.selenium:selenium-htmlunit-driver:{selenium-version}"
