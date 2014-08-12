@@ -62,7 +62,7 @@ import com.gargoylesoftware.htmlunit.WebConnection;
  * @see MockMvcWebConnection
  *
  */
-public final class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
+public class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
 	private WebClient webClient;
 
 	public MockMvcHtmlUnitDriver(WebApplicationContext webContext) {
@@ -104,9 +104,21 @@ public final class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
 	}
 
 	@Override
-	protected WebClient modifyWebClient(WebClient client) {
+	protected final WebClient modifyWebClient(WebClient client) {
 		webClient = super.modifyWebClient(client);
+		webClient = configureWebClient(webClient);
 		return webClient;
+	}
+
+	/**
+	 * Subclasses can override this method to customise the webclient that the HtmlUnit driver
+	 * uses.
+	 *
+	 * @param client The client to modify
+	 * @return The modified client
+	 */
+	protected WebClient configureWebClient(WebClient client) {
+		return client;
 	}
 
 	private void setWebContext(WebApplicationContext webContext) {
