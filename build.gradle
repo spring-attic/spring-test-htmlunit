@@ -16,8 +16,8 @@ ext.snapshotBuild = version.endsWith('SNAPSHOT')
 ext.milestoneBuild = !(releaseBuild || snapshotBuild)
 ext.junitVersion ='4.11'
 ext.seleniumVersion = '2.42.2'
-ext.springVersion = '4.1.0.BUILD-SNAPSHOT'
-ext.springSecurityVersion = '4.0.0.CI-SNAPSHOT'
+ext.springVersion = '4.1.0.RC2'
+ext.springSecurityVersion = '4.0.0.M2'
 
 ext.coreModuleProjects = [project('spring-test-htmlunit')]
 
