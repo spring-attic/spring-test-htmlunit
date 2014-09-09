@@ -63,7 +63,9 @@ import com.gargoylesoftware.htmlunit.WebConnection;
  *
  */
 public class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
-	private WebClient webClient;
+
+    private WebClient webClient;
+    private String contextPath;
 
 	public MockMvcHtmlUnitDriver(WebApplicationContext webContext) {
 		setWebContext(webContext);
@@ -88,7 +90,13 @@ public class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
 		setMockMvc(mockMvc);
 	}
 
-	public MockMvcHtmlUnitDriver(MockMvc mockMvc, boolean enableJavascript) {
+    public MockMvcHtmlUnitDriver(MockMvc mockMvc, String contextPath) {
+        super();
+        this.contextPath = contextPath;
+        setMockMvc(mockMvc);
+    }
+
+    public MockMvcHtmlUnitDriver(MockMvc mockMvc, boolean enableJavascript) {
 		super(enableJavascript);
 		setMockMvc(mockMvc);
 	}
@@ -129,6 +137,6 @@ public class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
 
 	private void setMockMvc(MockMvc mockMvc) {
 		Assert.notNull(mockMvc, "mockMvc cannot be null");
-		webClient.setWebConnection(new MockMvcWebConnection(mockMvc));
+		webClient.setWebConnection(new MockMvcWebConnection(mockMvc, contextPath));
 	}
 }
