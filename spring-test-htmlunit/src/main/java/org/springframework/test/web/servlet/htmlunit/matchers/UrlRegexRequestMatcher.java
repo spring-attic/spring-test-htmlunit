@@ -20,7 +20,9 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import java.util.regex.Pattern;
 
 /**
- * An implementation of WebRequestMatcher that allows matching on WebRequest#getUrl().toExternalForm() using a regular expression. For example, if you would like to match on the domain code.jquery.com, you might want to use the following:</p>
+ * <p>
+ * An implementation of WebRequestMatcher that allows matching on WebRequest#getUrl().toExternalForm() using a regular expression. For example, if you would like to match on the domain code.jquery.com, you might want to use the following:
+ * </p>
  *
  * <pre>
  * WebRequestMatcher cdnMatcher = new UrlRegexRequestMatcher(".*?//code.jquery.com/.*");
