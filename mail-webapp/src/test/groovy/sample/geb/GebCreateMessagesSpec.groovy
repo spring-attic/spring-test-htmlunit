@@ -11,16 +11,13 @@
  * specific language governing permissions and limitations under the License.
  */
 package sample.geb
-
 import geb.spock.GebReportingSpec
-import org.junit.After
-import org.junit.Before
-import org.openqa.selenium.WebDriver
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver
+import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriverBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 import sample.config.MockDataConfig
@@ -28,7 +25,6 @@ import sample.config.WebMvcConfig
 import sample.data.Message
 import sample.geb.pages.CreateMessagePage
 import sample.geb.pages.ViewMessagePage
-
 /**
  *
  * @author Rob Winch
@@ -43,11 +39,12 @@ class GebCreateMessagesSpec extends GebReportingSpec {
 	@Autowired
 	Message expectedMessage;
 
-	WebDriver driver;
+	HtmlUnitDriver driver;
 
 	def setup() {
 		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-		driver = new MockMvcHtmlUnitDriver(mockMvc, true);
+		driver = MockMvcHtmlUnitDriverBuilder.connectTo(mockMvc).build();
+		driver.setJavascriptEnabled(true);
 		browser.driver = driver
 	}
 
