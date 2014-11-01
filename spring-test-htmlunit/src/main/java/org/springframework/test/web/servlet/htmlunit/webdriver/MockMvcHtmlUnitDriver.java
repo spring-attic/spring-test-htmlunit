@@ -62,6 +62,7 @@ import com.gargoylesoftware.htmlunit.WebConnection;
  * @see MockMvcWebConnection
  *
  */
+@Deprecated
 public class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
 	private WebClient webClient;
 

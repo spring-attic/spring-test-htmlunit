@@ -12,10 +12,10 @@
  */
 package org.springframework.test.web.servlet.htmlunit;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.gargoylesoftware.htmlunit.CookieManager;
+import com.gargoylesoftware.htmlunit.WebConnection;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,12 +24,10 @@ import org.springframework.test.web.servlet.htmlunit.geb.GebSpecTestExecutionLis
 import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver;
 import org.springframework.util.Assert;
 
-import com.gargoylesoftware.htmlunit.CookieManager;
-import com.gargoylesoftware.htmlunit.WebConnection;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.WebResponse;
-
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -51,6 +49,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Rob Winch
  * @see MockMvcHtmlUnitDriver
+ * @see org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriverBuilder
  * @see GebSpecTestExecutionListener
  */
 public final class MockMvcWebConnection implements WebConnection {

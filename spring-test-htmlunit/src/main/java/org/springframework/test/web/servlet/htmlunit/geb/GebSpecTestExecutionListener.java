@@ -13,12 +13,13 @@
 package org.springframework.test.web.servlet.htmlunit.geb;
 
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
-import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver;
+import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriverBuilder;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
@@ -26,8 +27,8 @@ import org.springframework.web.context.WebApplicationContext;
  * <strong>NOTE</strong> This is experimental and may be removed at any time.
  * </p>
  * <p>
- * A {@link TestExecutionListener} that is intended to automatically inject a {@link MockMvcHtmlUnitDriver} instance in
- * subclasses of GebSpec.
+ * A {@link TestExecutionListener} that is intended to automatically inject a special HtmlUnitDriver
+ * instance in subclasses of GebSpec.
  * </p>
  * <p>
  * To use it ensure that you have the Spock Spring integration jar on your classpath and then update your test to look
@@ -45,7 +46,7 @@ import org.springframework.web.context.WebApplicationContext;
  * </pre>
  *
  * @author Rob Winch
- *
+ * @see org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriverBuilder
  */
 public class GebSpecTestExecutionListener extends AbstractTestExecutionListener {
 
@@ -56,7 +57,10 @@ public class GebSpecTestExecutionListener extends AbstractTestExecutionListener 
 		BeanWrapper testInstanceBeanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(testInstance);
 		Capabilities capabilities = (Capabilities) testInstanceBeanWrapper
 				.getPropertyValue("browser.driver.capabilities");
-		MockMvcHtmlUnitDriver mockMvcHtmlUnitDriver = new MockMvcHtmlUnitDriver(context, capabilities);
+		HtmlUnitDriver mockMvcHtmlUnitDriver = MockMvcHtmlUnitDriverBuilder
+				.connectTo(context)
+				.with(capabilities)
+				.build();
 		testInstanceBeanWrapper.setPropertyValue("browser.driver", mockMvcHtmlUnitDriver);
 	}
 }

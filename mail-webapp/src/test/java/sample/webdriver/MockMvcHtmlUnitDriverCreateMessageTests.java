@@ -5,12 +5,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver;
+import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriverBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import sample.config.MockDataConfig;
@@ -31,7 +32,7 @@ import static sample.fest.Assertions.assertThat;
  * there is in how you would write the tests.</li>
  * <li>The only difference is how we initialize our {@link WebDriver}</li>
  * <li>We do not need to run the web application on a server for this test since we are using
- * {@link org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver}</li>
+ * {@link org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriverBuilder}</li>
  * </ul>
  *
  * @author Rob Winch
@@ -52,7 +53,13 @@ public class MockMvcHtmlUnitDriverCreateMessageTests {
 	@Before
 	public void setup() {
 		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-		driver = new MockMvcHtmlUnitDriver(mockMvc, true);
+		driver = createDriver(mockMvc);
+	}
+
+	private static HtmlUnitDriver createDriver(final MockMvc mockMvc) {
+		final HtmlUnitDriver htmlUnitDriver = MockMvcHtmlUnitDriverBuilder.connectTo(mockMvc).build();
+		htmlUnitDriver.setJavascriptEnabled(true);
+		return htmlUnitDriver;
 	}
 
 	@After
