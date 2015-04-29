@@ -1,16 +1,20 @@
 buildscript {
   repositories {
     maven { url "https://repo.spring.io/plugins-release" }
-    maven { url "https://repo.spring.io/plugins-snapshot" }
-    jcenter()
   }
   dependencies {
-    classpath("org.springframework.build.gradle:propdeps-plugin:0.0.6-SNAPSHOT")
+    classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
     classpath('me.champeau.gradle:gradle-javadoc-hotfix-plugin:0.1')
-    classpath('org.gradle.api.plugins:gradle-tomcat-plugin:1.2.2')
-    classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.3'
   }
 }
+
+plugins {
+  id 'org.asciidoctor.convert' version '1.5.2'
+  id 'com.bluepapa32.watch' version '0.1.5'
+  id 'org.kordamp.gradle.livereload' version '0.2.1'
+  id 'com.bmuschko.tomcat' version '2.2.1'
+}
+
 ext.releaseBuild = version.endsWith('RELEASE')
 ext.snapshotBuild = version.endsWith('SNAPSHOT')
 ext.milestoneBuild = !(releaseBuild || snapshotBuild)
@@ -78,8 +82,8 @@ configure(allprojects) {
 
   idea {
     module {
-      scopes.PROVIDED.plus += configurations.provided
-      scopes.PROVIDED.plus += configurations.optional
+      scopes.PROVIDED.plus += [configurations.provided]
+      scopes.PROVIDED.plus += [configurations.optional]
     }
   }
   // servlet-api (2.5) and tomcat-servlet-api (3.0) classpath entries should not be
@@ -135,9 +139,6 @@ configure(allprojects) { subproject ->
 configure(rootProject) {
   apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 
-  asciidoctorj {
-    version = '1.5.0.preview.7'
-  }
   asciidoctor {
     options = [
             eruby: 'erubis',

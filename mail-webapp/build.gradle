@@ -1,29 +1,30 @@
 apply plugin: 'groovy'
 apply plugin: 'war'
-apply plugin: 'tomcat'
+apply plugin: 'com.bmuschko.tomcat'
 
 tasks.findByPath("artifactoryPublish")?.enabled = false
 sonarRunner {
     skipProject = true
 }
 
-task integrationTomcatRunWar(type: org.gradle.api.plugins.tomcat.tasks.TomcatRunWar, dependsOn: war) {
-    contextPath = '/mail'
-    daemon = true
-    doFirst {
-        // delay reserving ports to ensure they are still available
-        def ports = reservePorts(3)
-        httpPort = ports[0]
-        ajpPort = ports[1]
-        stopPort = ports[2]
-    }
+task integrationTomcatRunWar(type: com.bmuschko.gradle.tomcat.tasks.TomcatRun, dependsOn: war) {
+	contextPath = '/mail'
+	daemon = true
+	doFirst {
+		// delay reserving ports to ensure they are still available
+		def ports = reservePorts(3)
+		httpPort = ports[0]
+		ajpPort = ports[1]
+		stopPort = ports[2]
+	}
 }
 
-task integrationTomcatStop(type: org.gradle.api.plugins.tomcat.tasks.TomcatStop, dependsOn: war) {
-    doFirst {
-        stopPort = integrationTomcatRunWar.stopPort
-    }
+task integrationTomcatStop(type: com.bmuschko.gradle.tomcat.tasks.TomcatStop, dependsOn: war) {
+	doFirst {
+		stopPort = integrationTomcatRunWar.stopPort
+	}
 }
+
 test {
     doFirst {
         def host = 'localhost:' + integrationTomcatRunWar.httpPort
@@ -37,12 +38,10 @@ description = 'Spring MVC Test HtmlUnit Sample'
 tasks.findByPath("artifactoryPublish")?.enabled = false
 
 dependencies {
-    def tomcatVersion = '7.0.42'
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
-            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
-    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
-        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
-    }
+	def tomcatVersion = '7.0.61'
+	tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+			"org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+	tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}")
 
     compile "org.springframework:spring-context:$springVersion",
             "org.springframework:spring-webmvc:$springVersion",
