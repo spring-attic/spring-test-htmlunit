@@ -18,10 +18,16 @@ plugins {
 ext.releaseBuild = version.endsWith('RELEASE')
 ext.snapshotBuild = version.endsWith('SNAPSHOT')
 ext.milestoneBuild = !(releaseBuild || snapshotBuild)
+ext.htmlunitVersion = '2.16'
+ext.jacocoVersion = '0.7.4.201502262128'
 ext.junitVersion ='4.11'
-ext.seleniumVersion = '2.42.2'
-ext.springVersion = '4.1.0.RC2'
-ext.springSecurityVersion = '4.0.0.M2'
+ext.mockitoVersion = '1.10.19'
+ext.seleniumVersion = '2.45.0'
+ext.servletApiVersion = '3.0.1'
+ext.slf4jVersion = '1.7.10'
+ext.spockVersion = '1.0-groovy-2.4' 
+ext.springVersion = '4.1.6.RELEASE'
+ext.springSecurityVersion = '4.0.1.RELEASE'
 
 ext.coreModuleProjects = [project('spring-test-htmlunit')]
 

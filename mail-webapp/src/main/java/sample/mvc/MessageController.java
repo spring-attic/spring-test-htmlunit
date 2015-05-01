@@ -49,7 +49,8 @@ public class MessageController {
 
 	@RequestMapping("{id}")
 	public ModelAndView view(@PathVariable("id")
-	Message message) {
+	Long id) {
+		Message message = messageRepository.findOne(id);
 		return new ModelAndView("messages/view", "message", message);
 	}
 

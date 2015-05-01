@@ -15,24 +15,21 @@
  */
 package sample.config;
 
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.converter.ConverterRegistry;
-import sample.data.Message;
-import sample.data.MessageRepository;
-import sample.data.mock.MockConversionService;
-
-import java.util.Calendar;
-import java.util.Locale;
-
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.Calendar;
+import java.util.Locale;
+
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import sample.data.Message;
+import sample.data.MessageRepository;
 
 /**
  * @author Rob Winch
@@ -56,11 +53,6 @@ public class MockDataConfig {
 		});
 		when(messages.findOne(anyLong())).thenReturn(message);
 		return messages;
-	}
-
-	@Bean
-	public <T extends ConversionService & ConverterRegistry> MockConversionService<T> conversionService(T conversionService) {
-		return new MockConversionService<T>(conversionService);
 	}
 
 	@Bean
