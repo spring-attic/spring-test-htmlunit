@@ -12,6 +12,9 @@
  */
 package org.springframework.test.web.servlet.htmlunit.webdriver;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebConnection;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,30 +23,25 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebConnection;
-
 /**
- * <p>
- * Allows running tests off line by utilizing Spring's {@link MockMvc} to bridge between a request and a response. By
- * doing this we are able to avoid making any HTTP calls when our tests are running. This implies we do not need to
- * start a web container to run our tests.
- * </p>
- * <p>
- * Example usage can be seen below:
- * </p>
- * <h2>Instantiate with WebApplicationContext</h2>
+ * <p> Allows running tests off line by utilizing Spring's {@link MockMvc} to bridge
+ * between a request and a response. By doing this we are able to avoid making any HTTP
+ * calls when our tests are running. This implies we do not need to start a web container
+ * to run our tests. </p>
  *
+ * <p> Example usage can be seen below: </p>
+ *
+ * <h2>Instantiate with WebApplicationContext</h2>
+ * <p/>
  * <pre>
  * WebApplicationContext context = ...
  * MockHtmlUnitDriver driver = new MockHtmlUnitDriver(context, true);
  *
  * ... use driver as you would HtmlUnitDriver ...
  * </pre>
- *
+ * <p/>
  * <h2>Instantiate with MockMvc</h2>
- *
+ * <p/>
  * <pre>
  * MockMvc mockMvc = ...
  * MockHtmlUnitDriver driver = new MockHtmlUnitDriver(mockMvc, true);
@@ -51,16 +49,16 @@ import com.gargoylesoftware.htmlunit.WebConnection;
  * ... use driver as you would HtmlUnitDriver ...
  * </pre>
  * <p>
- * The only reason for this class is in order to customize the {@link WebConnection} used by {@link HtmlUnitDriver}. We
- * cannot use a simple bean methods since there are no accessor methods for {@link WebClient} or the {@link WebClient}'s
- * underlying {@link WebConnection}. The only means to update the {@link WebConnection} is to override the
+ * The only reason for this class is in order to customize the {@link WebConnection}
+ * used by {@link HtmlUnitDriver}. We cannot use a simple bean methods since there are no
+ * accessor methods for {@link WebClient} or the {@link WebClient}'s underlying {@link
+ * WebConnection}. The only means to update the {@link WebConnection} is to override the
  * {@link #modifyWebClient(WebClient)} method. Hence for the existence of this class.
  * </p>
  *
  * @author Rob Winch
  * @see MockMvc
  * @see MockMvcWebConnection
- *
  */
 public class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
 	private WebClient webClient;
@@ -69,17 +67,20 @@ public class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
 		setWebContext(webContext);
 	}
 
-	public MockMvcHtmlUnitDriver(WebApplicationContext webContext, boolean enableJavascript) {
+	public MockMvcHtmlUnitDriver(WebApplicationContext webContext,
+			boolean enableJavascript) {
 		super(enableJavascript);
 		setWebContext(webContext);
 	}
 
-	public MockMvcHtmlUnitDriver(WebApplicationContext webContext, BrowserVersion version) {
+	public MockMvcHtmlUnitDriver(WebApplicationContext webContext,
+			BrowserVersion version) {
 		super(version);
 		setWebContext(webContext);
 	}
 
-	public MockMvcHtmlUnitDriver(WebApplicationContext webContext, Capabilities capabilities) {
+	public MockMvcHtmlUnitDriver(WebApplicationContext webContext,
+			Capabilities capabilities) {
 		super(capabilities);
 		setWebContext(webContext);
 	}
@@ -103,6 +104,25 @@ public class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
 		setMockMvc(mockMvc);
 	}
 
+	public MockMvcHtmlUnitDriver(WebConnection webConnection) {
+		setWebConnection(webConnection);
+	}
+
+	public MockMvcHtmlUnitDriver(WebConnection webConnection, boolean enableJavascript) {
+		super(enableJavascript);
+		setWebConnection(webConnection);
+	}
+
+	public MockMvcHtmlUnitDriver(WebConnection webConnection, BrowserVersion version) {
+		super(version);
+		setWebConnection(webConnection);
+	}
+
+	public MockMvcHtmlUnitDriver(WebConnection webConnection, Capabilities capabilities) {
+		super(capabilities);
+		setWebConnection(webConnection);
+	}
+
 	@Override
 	protected final WebClient modifyWebClient(WebClient client) {
 		webClient = super.modifyWebClient(client);
@@ -111,8 +131,8 @@ public class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
 	}
 
 	/**
-	 * Subclasses can override this method to customise the webclient that the HtmlUnit driver
-	 * uses.
+	 * Subclasses can override this method to customise the webclient that the HtmlUnit
+	 * driver uses.
 	 *
 	 * @param client The client to modify
 	 * @return The modified client
@@ -129,6 +149,11 @@ public class MockMvcHtmlUnitDriver extends HtmlUnitDriver {
 
 	private void setMockMvc(MockMvc mockMvc) {
 		Assert.notNull(mockMvc, "mockMvc cannot be null");
-		webClient.setWebConnection(new MockMvcWebConnection(mockMvc));
+		setWebConnection(new MockMvcWebConnection(mockMvc));
+	}
+
+	private void setWebConnection(WebConnection webConnection) {
+		Assert.notNull(webConnection, "webConnection cannot be null");
+		webClient.setWebConnection(webConnection);
 	}
 }
