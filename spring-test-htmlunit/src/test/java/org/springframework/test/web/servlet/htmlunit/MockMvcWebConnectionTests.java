@@ -37,7 +37,7 @@ public class MockMvcWebConnectionTests {
 	@Before
 	public void setup() {
 		mockMvc = MockMvcBuilders
-							.standaloneSetup(new HelloController())
+							.standaloneSetup(new HelloController(), new ForwardController())
 							.build();
 
 		webClient = new WebClient();
@@ -68,6 +68,15 @@ public class MockMvcWebConnectionTests {
 		Page page = webClient.getPage("http://localhost/context/a");
 
 		assertThat(page.getWebResponse().getStatusCode()).isEqualTo(200);
+	}
+
+	@Test
+	public void forward() throws IOException {
+		webClient.setWebConnection(new MockMvcWebConnection(mockMvc, ""));
+
+		Page page = webClient.getPage("http://localhost/forward");
+
+		assertThat(page.getWebResponse().getContentAsString()).isEqualTo("hello");
 	}
 
 	@Test(expected = IllegalArgumentException.class)

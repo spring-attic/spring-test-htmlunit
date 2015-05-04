@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2013 the original author or authors.
+ * Copyright 2002-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,19 +17,15 @@ package org.springframework.test.web.servlet.htmlunit;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Rob Winch
  */
-@Controller
-public class HelloController {
-	@RequestMapping
-	@ResponseBody
-	public String header(HttpServletRequest request) {
-		return "hello";
+ @Controller
+public class ForwardController {
+
+	@RequestMapping("/forward")
+	public String forward() {
+		return "forward:/";
 	}
 }

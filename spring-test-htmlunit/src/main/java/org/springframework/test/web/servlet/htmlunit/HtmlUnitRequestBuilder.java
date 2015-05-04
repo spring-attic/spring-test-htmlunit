@@ -32,6 +32,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.SmartRequestBuilder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.util.Assert;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -65,6 +66,8 @@ final class HtmlUnitRequestBuilder implements RequestBuilder, Mergeable {
 	private RequestBuilder parentBuilder;
 
 	private SmartRequestBuilder parentPostProcessor;
+
+	private RequestPostProcessor forwardPostProcessor;
 
 	/**
 	 *
@@ -109,7 +112,18 @@ final class HtmlUnitRequestBuilder implements RequestBuilder, Mergeable {
 		result.setScheme(uriComponents.getScheme());
 		pathInfo(uriComponents,result);
 
-		return parentPostProcessor == null ? result : parentPostProcessor.postProcessRequest(result);
+		return postProcess(result);
+	}
+
+	private MockHttpServletRequest postProcess(MockHttpServletRequest request) {
+		if(parentPostProcessor != null) {
+			request = parentPostProcessor.postProcessRequest(request);
+		}
+		if(forwardPostProcessor != null) {
+			request = forwardPostProcessor.postProcessRequest(request);
+		}
+
+		return request;
 	}
 
 	private void parent(MockHttpServletRequest result, RequestBuilder parent) {
@@ -182,6 +196,10 @@ final class HtmlUnitRequestBuilder implements RequestBuilder, Mergeable {
 			throw new IllegalArgumentException("contextPath must start with /. Got '" + contextPath + "'");
 		}
 		this.contextPath = contextPath;
+	}
+
+	public void setForwardPostProcessor(RequestPostProcessor postProcessor) {
+		this.forwardPostProcessor = postProcessor;
 	}
 
 	private void authType(MockHttpServletRequest request) {

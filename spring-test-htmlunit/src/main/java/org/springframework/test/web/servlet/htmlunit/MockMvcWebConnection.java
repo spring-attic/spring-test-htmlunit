@@ -19,6 +19,7 @@ import java.util.Map;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.htmlunit.geb.GebSpecTestExecutionListener;
 import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver;
@@ -94,6 +95,19 @@ public final class MockMvcWebConnection implements WebConnection {
 		HtmlUnitRequestBuilder requestBuilder = new HtmlUnitRequestBuilder(sessions, cookieManager, webRequest);
 		requestBuilder.setContextPath(contextPath);
 
+		MockHttpServletResponse httpServletResponse = getResponse(requestBuilder);
+
+		String forwardedUrl = httpServletResponse.getForwardedUrl();
+		while(forwardedUrl != null) {
+			requestBuilder.setForwardPostProcessor(new ForwardRequestPostProcessor(forwardedUrl));
+			httpServletResponse = getResponse(requestBuilder);
+			forwardedUrl = httpServletResponse.getForwardedUrl();
+		}
+
+		return new MockWebResponseBuilder(startTime, webRequest, httpServletResponse).build();
+	}
+
+	private MockHttpServletResponse getResponse(RequestBuilder requestBuilder) throws IOException {
 		ResultActions resultActions;
 		try {
 			resultActions = mockMvc.perform(requestBuilder);
@@ -102,9 +116,7 @@ public final class MockMvcWebConnection implements WebConnection {
 			throw (IOException) new IOException(e.getMessage()).initCause(e);
 		}
 
-		MockHttpServletResponse httpServletResponse = resultActions.andReturn().getResponse();
-
-		return new MockWebResponseBuilder(startTime, webRequest, httpServletResponse).build();
+		return resultActions.andReturn().getResponse();
 	}
 
 	/**
