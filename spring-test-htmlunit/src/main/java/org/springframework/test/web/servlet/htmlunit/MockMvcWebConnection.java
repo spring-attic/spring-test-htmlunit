@@ -64,13 +64,13 @@ public final class MockMvcWebConnection implements WebConnection {
 	private final String contextPath;
 
 	/**
-	 * Creates a new instance that assumes that the first path segment is the context root of the application. For example,
-	 * the URL http://localhost/context/test/this would use /context as the context root.
+	 * Creates a new instance that assumes the context root of the application is "". For example,
+	 * the URL http://localhost/test/this would use "" as the context root.
 	 *
 	 * @param mockMvc the MockMvc instance to use
 	 */
 	public MockMvcWebConnection(MockMvc mockMvc) {
-		this(mockMvc,null);
+		this(mockMvc, "");
 	}
 
 	/**

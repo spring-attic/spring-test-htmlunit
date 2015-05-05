@@ -8,7 +8,7 @@ sonarRunner {
 }
 
 task integrationTomcatRunWar(type: com.bmuschko.gradle.tomcat.tasks.TomcatRun, dependsOn: war) {
-	contextPath = '/mail'
+	contextPath = ''
 	daemon = true
 	doFirst {
 		// delay reserving ports to ensure they are still available
@@ -78,7 +78,7 @@ dependencies {
 	jacoco "org.jacoco:org.jacoco.agent:$jacocoVersion:runtime"
 }
 
-eclipse.wtp.component.contextPath = '/mail'
+eclipse.wtp.component.contextPath = ''
 
 test {
 	dependsOn integrationTomcatRunWar

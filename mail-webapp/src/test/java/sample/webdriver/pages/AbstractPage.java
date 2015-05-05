@@ -41,7 +41,7 @@ public class AbstractPage {
 	}
 
     static void get(WebDriver driver, String relativeUrl) {
-        String url = System.getProperty("geb.build.baseUrl","http://localhost:9990/mail/") + relativeUrl;
+        String url = System.getProperty("geb.build.baseUrl","http://localhost:9990/") + relativeUrl;
         driver.get(url);
     }
 }

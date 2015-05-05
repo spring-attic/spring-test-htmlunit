@@ -71,7 +71,7 @@ public class MockMvcHtmlUnitCreateMessageTests {
 	@Test
 	public void createMessage() throws IOException {
 		// Load the Create Message Form
-		HtmlPage createMsgFormPage = webClient.getPage("http://localhost/mail/messages/form");
+		HtmlPage createMsgFormPage = webClient.getPage("http://localhost/messages/form");
 
 		// Submit the create message form
 		HtmlForm form = createMsgFormPage.getHtmlElementById("messageForm");
