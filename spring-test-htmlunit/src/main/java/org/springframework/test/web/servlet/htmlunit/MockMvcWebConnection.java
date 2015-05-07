@@ -21,8 +21,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.htmlunit.geb.GebSpecTestExecutionListener;
-import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver;
+import org.springframework.test.web.servlet.htmlunit.webdriver.WebConnectionHtmlUnitDriver;
 import org.springframework.util.Assert;
 
 import com.gargoylesoftware.htmlunit.CookieManager;
@@ -51,8 +50,7 @@ import javax.servlet.http.HttpServletRequest;
  * </pre>
  *
  * @author Rob Winch
- * @see MockMvcHtmlUnitDriver
- * @see GebSpecTestExecutionListener
+ * @see WebConnectionHtmlUnitDriver
  */
 public final class MockMvcWebConnection implements WebConnection {
 	private final CookieManager cookieManager;
