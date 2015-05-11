@@ -20,6 +20,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.htmlunit.MockMvcWebConnectionBuilderSupport;
+import org.springframework.test.web.servlet.setup.MockMvcConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
@@ -42,6 +43,10 @@ public class MockMvcHtmlUnitDriverBuilder extends MockMvcWebConnectionBuilderSup
 		super(context);
 	}
 
+	protected MockMvcHtmlUnitDriverBuilder(WebApplicationContext context, MockMvcConfigurer configurer) {
+		super(context, configurer);
+	}
+
 	/**
 	 * Creates a new instance with a WebApplicationContext.
 	 *
@@ -50,6 +55,17 @@ public class MockMvcHtmlUnitDriverBuilder extends MockMvcWebConnectionBuilderSup
 	 */
 	public static MockMvcHtmlUnitDriverBuilder webAppContextSetup(WebApplicationContext context) {
 		return new MockMvcHtmlUnitDriverBuilder(context);
+	}
+
+	/**
+	 * Creates a new instance using a WebApplicationContext
+	 * @param context the WebApplicationContext to create a MockMvc instance from.
+	 * @param configurer the MockMvcConfigurer to apply
+	 * Cannot be null.
+	 * @return the MockMvcHtmlUnitDriverBuilder to customize
+	 */
+	public static MockMvcHtmlUnitDriverBuilder webAppContextSetup(WebApplicationContext context, MockMvcConfigurer configurer) {
+		return new MockMvcHtmlUnitDriverBuilder(context, configurer);
 	}
 
 	/**

@@ -27,6 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.htmlunit.MockMvcWebClientBuilder;
 import org.springframework.test.web.servlet.htmlunit.MockMvcWebConnection;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -42,38 +43,45 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 /**
  * @author Rob Winch
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {WebMvcConfig.class, WebSecurityConfig.class, MockDataConfig.class})
-@WebAppConfiguration
-@WithMockUser
+// tag::junit-spring-setup[]
+@RunWith(SpringJUnit4ClassRunner.class) // <1>
+@ContextConfiguration(classes = {WebMvcConfig.class, WebSecurityConfig.class, MockDataConfig.class}) // <2>
+@WebAppConfiguration // <3>
+@WithMockUser // <4>
 public class MockMvcHtmlUnitCreateMessageTests {
 
 	@Autowired
-	private WebApplicationContext context;
+	WebApplicationContext context;
+	// end::junit-spring-setup[]
 
-	private WebClient webClient;
+
+	// tag::webclient[]
+	WebClient webClient;
 
 	@Before
 	public void setup() {
-		MockMvc mockMvc = MockMvcBuilders
-				.webAppContextSetup(context)
-				.apply(springSecurity())
-				.build();
-		webClient = new WebClient();
-		webClient.setWebConnection(new MockMvcWebConnection(mockMvc));
+		webClient = MockMvcWebClientBuilder
+			.webAppContextSetup(context, springSecurity())
+			// for illustration only - defaults to ""
+			.contextPath("")
+			.createWebClient();
 	}
+	// end::webclient[]
 
 	@After
 	public void cleanup() {
-		this.webClient.closeAllWindows();
+		this.webClient.close();
 	}
 
 	@Test
 	public void createMessage() throws IOException {
 		// Load the Create Message Form
+		// tag::create-form[]
 		HtmlPage createMsgFormPage = webClient.getPage("http://localhost/messages/form");
+		// end::create-form[]
 
 		// Submit the create message form
+		// tag::submit-form[]
 		HtmlForm form = createMsgFormPage.getHtmlElementById("messageForm");
 		HtmlTextInput summaryInput = createMsgFormPage.getHtmlElementById("summary");
 		summaryInput.setValueAttribute("Spring Rocks");
@@ -81,8 +89,10 @@ public class MockMvcHtmlUnitCreateMessageTests {
 		textInput.setText("In case you didn't know, Spring Rocks!");
 		HtmlSubmitInput submit = form.getOneHtmlElementByAttribute("input", "type", "submit");
 		HtmlPage newMessagePage = submit.click();
+		// end::submit-form[]
 
 		// verify we successfully created a message and displayed the newly create message
+		// tag::verify-form[]
 		assertThat(newMessagePage.getUrl().toString()).endsWith("/messages/123");
 		String id = newMessagePage.getHtmlElementById("id").getTextContent();
 		assertThat(id).isEqualTo("123");
@@ -90,5 +100,6 @@ public class MockMvcHtmlUnitCreateMessageTests {
 		assertThat(summary).isEqualTo("Spring Rocks");
 		String text = newMessagePage.getHtmlElementById("text").getTextContent();
 		assertThat(text).isEqualTo("In case you didn't know, Spring Rocks!");
+		// end::verify-form[]
 	}
 }

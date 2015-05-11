@@ -18,6 +18,7 @@ package org.springframework.test.web.servlet.htmlunit;
 import com.gargoylesoftware.htmlunit.WebClient;
 
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
@@ -36,6 +37,10 @@ public class MockMvcWebClientBuilder extends MockMvcWebConnectionBuilderSupport<
 		super(context);
 	}
 
+	protected MockMvcWebClientBuilder(WebApplicationContext context, MockMvcConfigurer configurer) {
+		super(context, configurer);
+	}
+
 	/**
 	 * Creates a new instance with a WebApplicationContext.
 	 *
@@ -44,6 +49,16 @@ public class MockMvcWebClientBuilder extends MockMvcWebConnectionBuilderSupport<
 	 */
 	public static MockMvcWebClientBuilder webAppContextSetup(WebApplicationContext context) {
 		return new MockMvcWebClientBuilder(context);
+	}
+
+	/**
+	 * Creates a new instance using a WebApplicationContext
+	 * @param context the WebApplicationContext to create a MockMvc instance from.
+	 * @param configurer the MockMvcConfigurer to apply
+	 * Cannot be null.
+	 */
+	public static MockMvcWebClientBuilder webAppContextSetup(WebApplicationContext context, MockMvcConfigurer configurer) {
+		return new MockMvcWebClientBuilder(context, configurer);
 	}
 
 	/**

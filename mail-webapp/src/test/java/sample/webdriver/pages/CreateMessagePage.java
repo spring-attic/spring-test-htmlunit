@@ -24,11 +24,16 @@ import sample.data.Message;
  * @author Rob Winch
  *
  */
-public class CreateMessagePage extends AbstractPage {
+// tag::class[]
+public class CreateMessagePage
+        extends AbstractPage { // <1>
+
+    // <2>
     private WebElement summary;
 
     private WebElement text;
 
+    // <3>
     @FindBy(css = "input[type=submit]")
     private WebElement submit;
 
@@ -44,7 +49,9 @@ public class CreateMessagePage extends AbstractPage {
     }
 
     public static CreateMessagePage to(WebDriver driver) {
+        // driver.get("http://localhost:8080/messages/form");
         get(driver, "messages/form");
         return PageFactory.initElements(driver, CreateMessagePage.class);
     }
 }
+// tag::class[]

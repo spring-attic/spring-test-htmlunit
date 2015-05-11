@@ -15,7 +15,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 /**
  * @author Rob Winch
  */
- @RunWith(MockitoJUnitRunner.class)
+// tag::junit-spring-setup[]
+@RunWith(MockitoJUnitRunner.class)
 public class WebConnectionHtmlUnitDriverTests {
 	@Mock
 	WebConnection connection;

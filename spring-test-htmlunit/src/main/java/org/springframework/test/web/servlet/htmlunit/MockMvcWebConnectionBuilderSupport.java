@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.htmlunit.matchers.HostRequestMatcher;
 import org.springframework.test.web.servlet.htmlunit.matchers.WebRequestMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcConfigurer;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -62,6 +63,16 @@ public abstract class MockMvcWebConnectionBuilderSupport<T extends MockMvcWebCon
 	 */
 	protected MockMvcWebConnectionBuilderSupport(WebApplicationContext context) {
 		this(MockMvcBuilders.webAppContextSetup(context).build());
+	}
+
+	/**
+	 * Creates a new instance using a WebApplicationContext
+	 * @param context the WebApplicationContext to create a MockMvc instance from.
+	 * @param configurer the MockMvcConfigurer to apply
+	 * Cannot be null.
+	 */
+	protected MockMvcWebConnectionBuilderSupport(WebApplicationContext context, MockMvcConfigurer configurer) {
+		this(MockMvcBuilders.webAppContextSetup(context).apply(configurer).build());
 	}
 
 	/**

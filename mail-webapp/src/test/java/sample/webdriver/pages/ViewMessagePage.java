@@ -67,6 +67,7 @@ public class ViewMessagePage extends AbstractPage {
 		return text.getText();
 	}
 
+	// tag::get-message[]
 	public Message getMessage() throws ParseException {
 		Message message = new Message();
 		message.setId(getId());
@@ -75,4 +76,5 @@ public class ViewMessagePage extends AbstractPage {
 		message.setText(getText());
 		return message;
 	}
+	// end::get-message[]
 }

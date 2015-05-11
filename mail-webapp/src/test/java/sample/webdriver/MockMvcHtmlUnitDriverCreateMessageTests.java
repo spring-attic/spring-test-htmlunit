@@ -1,27 +1,28 @@
 package sample.webdriver;
 
+import java.text.ParseException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import sample.config.MockDataConfig;
 import sample.config.WebMvcConfig;
+import sample.config.WebSecurityConfig;
 import sample.data.Message;
+import static sample.fest.Assertions.assertThat;
 import sample.webdriver.pages.CreateMessagePage;
 import sample.webdriver.pages.ViewMessagePage;
 
-import java.text.ParseException;
-
-import static sample.fest.Assertions.assertThat;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriverBuilder;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * An end to end test that validates the {@link CreateMessagePage}. A few things to notice:
@@ -37,30 +38,38 @@ import static sample.fest.Assertions.assertThat;
  * @author Rob Winch
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {WebMvcConfig.class, MockDataConfig.class})
-@WebAppConfiguration
+// tag::junit-spring-setup[]
+@RunWith(SpringJUnit4ClassRunner.class) // <1>
+@ContextConfiguration(classes = {WebMvcConfig.class, WebSecurityConfig.class, MockDataConfig.class}) // <2>
+@WebAppConfiguration // <3>
+@WithMockUser // <4>
 public class MockMvcHtmlUnitDriverCreateMessageTests {
 	@Autowired
-	private WebApplicationContext context;
+	WebApplicationContext context;
+	// end::junit-spring-setup[]
 
 	@Autowired
-	private Message expectedMessage;
+	Message expectedMessage;
 
-	private WebDriver driver;
+	// tag::webdriver[]
+	WebDriver driver;
 
 	@Before
 	public void setup() {
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-		driver = new MockMvcHtmlUnitDriver(mockMvc, true);
+		driver = MockMvcHtmlUnitDriverBuilder
+			.webAppContextSetup(context, springSecurity())
+			.createDriver();
 	}
+	// end::webdriver[]
 
+	// tag::cleanup[]
 	@After
 	public void destroy() {
 		if(driver != null) {
 			driver.close();
 		}
 	}
+	// end::cleanup[]
 
 	@Test
 	public void missingFieldWithJavascriptValidationDisplaysError() {
@@ -81,10 +90,18 @@ public class MockMvcHtmlUnitDriverCreateMessageTests {
 		String expectedSummary = expectedMessage.getSummary();
 		String expectedText = expectedMessage.getText();
 
+		// tag::to-create-message[]
 		CreateMessagePage page = CreateMessagePage.to(driver);
+		// end::to-create-message[]
 
-		ViewMessagePage viewMessagePage = page.createMessage(ViewMessagePage.class, expectedSummary, expectedText);
+		// tag::create-message[]
+		ViewMessagePage viewMessagePage =
+			page.createMessage(ViewMessagePage.class, expectedSummary, expectedText);
+		// end::create-message[]
+
+		// tag::create-message-assert[]
 		assertThat(viewMessagePage.getMessage()).isEqualTo(expectedMessage);
 		assertThat(viewMessagePage.getSuccess()).isEqualTo("Successfully created a new message");
+		// end::create-message-assert[]
 	}
 }

@@ -67,6 +67,7 @@ public class MockMvcCreateMessageTests {
 
 	@Test
 	public void createMessage() throws Exception {
+		// tag::create-message[]
 		MockHttpServletRequestBuilder createMessage = post("/messages/")
 			.param("summary", "Spring Rocks")
 			.param("text", "In case you didn't know, Spring Rocks!");
@@ -74,17 +75,21 @@ public class MockMvcCreateMessageTests {
 		mockMvc.perform(createMessage)
 			.andExpect(status().is3xxRedirection())
 			.andExpect(redirectedUrl("/messages/123"));
+		// end::create-message[]
 	}
 
 	@Test
 	public void createMessageForm() throws Exception {
+		// tag::create-message-form[]
 		mockMvc.perform(get("/messages/form"))
 			.andExpect(xpath("//input[@name='summary']").exists())
 			.andExpect(xpath("//textarea[@name='text']").exists());
+		// end::create-message-form[]
 	}
 
 	@Test
 	public void createMessageFormSubmit() throws Exception {
+		// tag::create-message-form-submit[]
 		String summaryParamName = "summary";
 		String textParamName = "text";
 		mockMvc.perform(get("/messages/form"))
@@ -98,5 +103,6 @@ public class MockMvcCreateMessageTests {
 		mockMvc.perform(createMessage)
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("/messages/123"));
+		// end::create-message-form-submit[]
 	}
 }

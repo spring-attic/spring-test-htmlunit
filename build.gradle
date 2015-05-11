@@ -18,6 +18,8 @@ plugins {
 ext.releaseBuild = version.endsWith('RELEASE')
 ext.snapshotBuild = version.endsWith('SNAPSHOT')
 ext.milestoneBuild = !(releaseBuild || snapshotBuild)
+
+ext.gebVersion = '0.10.0'
 ext.htmlunitVersion = '2.16'
 ext.jacocoVersion = '0.7.4.201502262128'
 ext.junitVersion ='4.11'
@@ -25,7 +27,7 @@ ext.mockitoVersion = '1.10.19'
 ext.seleniumVersion = '2.45.0'
 ext.servletApiVersion = '3.0.1'
 ext.slf4jVersion = '1.7.10'
-ext.spockVersion = '1.0-groovy-2.4' 
+ext.spockVersion = '1.0-groovy-2.4'
 ext.springVersion = '4.1.6.RELEASE'
 ext.springSecurityVersion = '4.0.1.RELEASE'
 
@@ -145,29 +147,77 @@ configure(allprojects) { subproject ->
 configure(rootProject) {
   apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 
-  asciidoctor {
-    options = [
-            eruby: 'erubis',
-            attributes: [
-                    toc : '',
-                    'toc-placement' : 'preamble',
-                    copycss : '',
-                    icons : 'font',
-                    'source-highlighter': 'prettify',
-                    sectanchors : '',
-                    idprefix: '',
-                    idseparator: '-',
-                    doctype: 'book',
-                    numbered: '',
-                    revnumber : project.version,
-                    version : project.version,
-                    snapshot : snapshotBuild,
-                    release : releaseBuild,
-                    milestone : milestoneBuild
-            ]
-    ]
+
+  dependencies {
+    testCompile project(':spring-test-htmlunit'),
+            "org.springframework:spring-test:$springVersion",
+            "org.springframework:spring-webmvc:$springVersion",
+            "org.springframework.security:spring-security-web:$springSecurityVersion",
+            "org.springframework.security:spring-security-config:$springSecurityVersion",
+            "org.springframework.security:spring-security-test:$springSecurityVersion",
+            "org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion",
+            "org.seleniumhq.selenium:selenium-support:$seleniumVersion",
+            "javax.servlet:javax.servlet-api:$servletApiVersion",
+            "junit:junit:$junitVersion"
+
+    jacoco "org.jacoco:org.jacoco.agent:$jacocoVersion:runtime"
   }
+
+  task configureAciidoctor << {
+    configure(project.tasks.asciidoctor) {
+      def docsTestSource = project.rootProject.sourceSets.test.java.srcDirs[0]
+      def samplesMainSource = project(':mail-webapp').sourceSets.main.java.srcDirs[0]
+      def samplesTestSource = project(':mail-webapp').sourceSets.test.java.srcDirs[0]
+      def samplesTestSourceGroovy =
+              project(':mail-webapp').sourceSets.test.groovy.srcDirs[0]
+
+      inputs.dir docsTestSource
+      inputs.dir samplesMainSource
+      inputs.dir samplesTestSource
+      inputs.dir samplesTestSourceGroovy
+
+      options = [eruby     : 'erubis',
+                 attributes: ['docs-src-test-java'     : docsTestSource,
+                              'samples-src-main-java'  : samplesMainSource,
+                              'samples-src-test-java'  : samplesTestSource,
+                              'samples-src-test-groovy': samplesTestSourceGroovy,
+
+                              'selenium-version'       : seleniumVersion,
+                              'spock-version'          : spockVersion,
+                              'geb-version'            : gebVersion,
+
+                              toc                      : '',
+                              'toc-placement'          : 'preamble',
+                              copycss                  : '',
+                              icons                    : 'font',
+                              'source-highlighter'     : 'prettify',
+                              sectanchors              : '',
+                              idprefix                 : '',
+                              idseparator              : '-',
+                              doctype                  : 'book',
+                              numbered                 : '',
+                              revnumber                : project.version,
+                              version                  : project.version,
+                              snapshot                 : snapshotBuild,
+                              release                  : releaseBuild,
+                              milestone                : milestoneBuild]]
+    }
+  }
+
+  asciidoctor.dependsOn configureAciidoctor
   build.dependsOn asciidoctor
+
+
+  watch {
+    asciidoc {
+      files fileTree('src')
+      tasks 'asciidoctor'
+    }
+  }
+
+  liveReload {
+    docRoot project.projectDir.canonicalPath
+  }
 
   task api(type: Javadoc) {
     group = 'Documentation'

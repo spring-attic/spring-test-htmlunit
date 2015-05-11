@@ -21,6 +21,7 @@ import geb.Page
  * @author Rob Winch
  *
  */
+// tag::class[]
 class CreateMessagePage extends Page {
 	static at = { assert title == 'Messages : Create'; true }
 	static url = 'messages/form'
@@ -30,3 +31,4 @@ class CreateMessagePage extends Page {
 		errors(required:false) { $('label.error, .alert-error')?.text() }
 	}
 }
+// end::class[]

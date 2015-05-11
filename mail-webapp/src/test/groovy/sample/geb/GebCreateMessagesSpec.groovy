@@ -13,48 +13,51 @@
 package sample.geb
 
 import geb.spock.GebReportingSpec
-import org.junit.After
-import org.junit.Before
 import org.openqa.selenium.WebDriver
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.web.WebAppConfiguration
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriver
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.test.web.servlet.htmlunit.webdriver.MockMvcHtmlUnitDriverBuilder
 import org.springframework.web.context.WebApplicationContext
 import sample.config.MockDataConfig
 import sample.config.WebMvcConfig
+import sample.config.WebSecurityConfig
 import sample.data.Message
 import sample.geb.pages.CreateMessagePage
 import sample.geb.pages.ViewMessagePage
+
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 
 /**
  *
  * @author Rob Winch
  *
  */
-@ContextConfiguration(classes=[WebMvcConfig,MockDataConfig])
-@WebAppConfiguration
-class GebCreateMessagesSpec extends GebReportingSpec {
+// tag::spock-spring-setup[]
+@ContextConfiguration(classes=[WebMvcConfig, WebSecurityConfig, MockDataConfig]) // <1>
+@WebAppConfiguration // <2>
+@WithMockUser // <3>
+class GebCreateMessagesSpec
+		extends GebReportingSpec { // <4>
+
 	@Autowired
 	WebApplicationContext context;
+// end::spock-spring-setup[]
 
 	@Autowired
 	Message expectedMessage;
 
-	WebDriver driver;
-
+	// tag::webdriver[]
 	def setup() {
-		MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-		driver = new MockMvcHtmlUnitDriver(mockMvc, true);
-		browser.driver = driver
+		browser.driver = MockMvcHtmlUnitDriverBuilder
+			.webAppContextSetup(context, springSecurity())
+			.createDriver()
 	}
+	// end::webdriver[]
 
 	def destroy() {
-		if(driver != null) {
-			driver.close();
-		}
+		browser.driver?.close()
 	}
 
 	def 'missing field with javascript validation displays error'() {
@@ -63,8 +66,11 @@ class GebCreateMessagesSpec extends GebReportingSpec {
 			at CreateMessagePage
 		when:
 			submit.click(CreateMessagePage)
+		// tag::at-create-message[]
 		then:
+			at CreateMessagePage
 			errors.contains('This field is required.')
+		// end::at-create-message[]
 	}
 
 	def 'missing field server side validation displays error'() {
@@ -82,12 +88,16 @@ class GebCreateMessagesSpec extends GebReportingSpec {
 		setup:
 			def expectedSummary = 'Spring Rocks'
 			def expectedMessage = 'In case you didn\'t know, Spring Rocks!'
+			// tag::to-create-message[]
 			to CreateMessagePage
+			// end::to-create-message[]
 			at CreateMessagePage
+		// tag::create-message[]
 		when:
 			form.summary = expectedSummary
 			form.text = expectedMessage
 			submit.click(ViewMessagePage)
+		// tag::create-message-assert[]
 		then:
 			at ViewMessagePage
 			success == 'Successfully created a new message'
@@ -95,5 +105,7 @@ class GebCreateMessagesSpec extends GebReportingSpec {
 			date
 			summary == expectedSummary
 			message == expectedMessage
+
+		// end::create-message-assert[]
 	}
 }
