@@ -288,6 +288,8 @@ configure(rootProject) {
     }
   }
 
+  configurations.archives.artifacts.clear()
+
   artifacts {
     archives docsZip
     archives distZip
