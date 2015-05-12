@@ -97,6 +97,7 @@ class GebCreateMessagesSpec
 			form.summary = expectedSummary
 			form.text = expectedMessage
 			submit.click(ViewMessagePage)
+		// end::create-message[]
 		// tag::create-message-assert[]
 		then:
 			at ViewMessagePage
