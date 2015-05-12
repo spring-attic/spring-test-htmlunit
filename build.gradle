@@ -147,6 +147,7 @@ configure(allprojects) { subproject ->
 configure(rootProject) {
   apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 
+  tasks.findByPath("artifactoryPublish")?.enabled = false
 
   dependencies {
     testCompile project(':spring-test-htmlunit'),
