@@ -166,7 +166,7 @@ Then ensure you have added the dependencies:
 [subs="verbatim,attributes"]
 ----
 <dependency>
-  <groupId>org.springframework</groupId>
+  <groupId>org.springframework.test.htmlunit</groupId>
   <artifactId>spring-test-htmlunit</artifactId>
   <version>{project-version}</version>
   <scope>test</scope>
@@ -241,7 +241,7 @@ Then ensure you have added the necessary dependencies:
 [subs="verbatim,attributes"]
 ----
 dependencies {
-  testCompile 'org.springframework:spring-test-htmlunit:{project-version}'
+  testCompile 'org.springframework.test.htmlunit:spring-test-htmlunit:{project-version}'
 
   // necessary only if you are using WebDriver
   testCompile "org.seleniumhq.selenium:selenium-htmlunit-driver:{selenium-version}"

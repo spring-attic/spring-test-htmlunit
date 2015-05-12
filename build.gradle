@@ -60,7 +60,7 @@ configure(allprojects) {
 
   apply from: "${rootProject.projectDir}/publish-maven.gradle"
 
-  group = 'org.springframework'
+  group = 'org.springframework.test.htmlunit'
 
   sourceCompatibility=1.6
   targetCompatibility=1.6
