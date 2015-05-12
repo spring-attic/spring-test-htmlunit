@@ -41,6 +41,7 @@ import com.gargoylesoftware.htmlunit.WebRequest;
  * WebRequestMatcher cdnMatcher = new HostMatcher("code.jquery.com", "cdn.com");
  * </pre>
  *
+ * <p>
  * Alternatively, one can also specify the port. For example, the following would match
  * any request to the host "code.jquery.com" with the port of 80.
  * </p>
