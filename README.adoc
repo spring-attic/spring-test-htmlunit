@@ -11,7 +11,10 @@ NOTE: MockMvc will work with templating technologies that do not rely on a Servl
 
 == Documentation
 
-You can find the documentation at link:src/asciidoc/index.adoc[]
+You can find documentation at:
+
+* http://docs.spring.io/spring-test-htmlunit/docs/current-SNAPSHOT/reference/html5/[Current Snapshot]
+* http://docs.spring.io/spring-test-htmlunit/docs/current/reference/html5/[Current Stable]
 
 == Minimum Requirements
 
