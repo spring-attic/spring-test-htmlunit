@@ -54,11 +54,8 @@ configure(allprojects) {
   apply plugin: 'eclipse-wtp'
   apply plugin: 'idea'
   apply plugin: 'propdeps'
-  apply plugin: 'propdeps-maven'
   apply plugin: 'propdeps-idea'
   apply plugin: 'propdeps-eclipse'
-
-  apply from: "${rootProject.projectDir}/publish-maven.gradle"
 
   group = 'org.springframework.test.htmlunit'
 
@@ -102,7 +99,11 @@ configure(allprojects) {
   }
 }
 
-configure(allprojects) { subproject ->
+configure(subprojects) { subproject ->
+
+  apply plugin: 'propdeps-maven'
+  apply from: "${rootProject.projectDir}/publish-maven.gradle"
+
   jar {
     manifest.attributes['Implementation-Title'] = subproject.name
     manifest.attributes['Implementation-Version'] = subproject.version
@@ -146,8 +147,6 @@ configure(allprojects) { subproject ->
 
 configure(rootProject) {
   apply plugin: 'org.asciidoctor.gradle.asciidoctor'
-
-  tasks.findByPath("artifactoryPublish")?.enabled = false
 
   dependencies {
     testCompile project(':spring-test-htmlunit'),
