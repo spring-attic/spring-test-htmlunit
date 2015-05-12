@@ -176,31 +176,32 @@ configure(rootProject) {
       inputs.dir samplesTestSource
       inputs.dir samplesTestSourceGroovy
 
-      options = [eruby     : 'erubis',
-                 attributes: ['docs-src-test-java'     : docsTestSource,
-                              'samples-src-main-java'  : samplesMainSource,
-                              'samples-src-test-java'  : samplesTestSource,
-                              'samples-src-test-groovy': samplesTestSourceGroovy,
+      options eruby : 'erubis'
 
-                              'selenium-version'       : seleniumVersion,
-                              'spock-version'          : spockVersion,
-                              'geb-version'            : gebVersion,
+      attributes   'docs-src-test-java'     : docsTestSource,
+                   'samples-src-main-java'  : samplesMainSource,
+                   'samples-src-test-java'  : samplesTestSource,
+                   'samples-src-test-groovy': samplesTestSourceGroovy,
 
-                              toc                      : '',
-                              'toc-placement'          : 'preamble',
-                              copycss                  : '',
-                              icons                    : 'font',
-                              'source-highlighter'     : 'prettify',
-                              sectanchors              : '',
-                              idprefix                 : '',
-                              idseparator              : '-',
-                              doctype                  : 'book',
-                              numbered                 : '',
-                              revnumber                : project.version,
-                              version                  : project.version,
-                              snapshot                 : snapshotBuild,
-                              release                  : releaseBuild,
-                              milestone                : milestoneBuild]]
+                   'selenium-version'       : seleniumVersion,
+                   'spock-version'          : spockVersion,
+                   'geb-version'            : gebVersion,
+
+                   toc                      : '',
+                   'toc-placement'          : 'preamble',
+                   copycss                  : '',
+                   icons                    : 'font',
+                   'source-highlighter'     : 'prettify',
+                   sectanchors              : '',
+                   idprefix                 : '',
+                   idseparator              : '-',
+                   doctype                  : 'book',
+                   numbered                 : '',
+                   revnumber                : project.version,
+                   version                  : project.version,
+                   snapshot                 : snapshotBuild,
+                   release                  : releaseBuild,
+                   milestone                : milestoneBuild
     }
   }
 
