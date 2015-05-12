@@ -31,7 +31,7 @@ def customizePom(pom, gradleProject) {
         generatedPom.project {
             name = gradleProject.description
             description = gradleProject.description
-            url = 'https://github.com/rwinch/spring-test-mvc-htmlunit'
+            url = 'https://github.com/rwinch/spring-test-htmlunit'
             licenses {
                 license {
                     name 'The Apache Software License, Version 2.0'
@@ -40,15 +40,15 @@ def customizePom(pom, gradleProject) {
                 }
             }
             scm {
-                url = 'https://github.com/rwinch/spring-test-mvc-htmlunit'
-                connection = 'scm:git:git://github.com/rwinch/spring-test-mvc-htmlunit'
-                developerConnection = 'scm:git:git://github.com/rwinch/spring-test-mvc-htmlunit'
+                url = 'https://github.com/spring-projects/spring-test-htmlunit'
+                connection = 'scm:git:git://github.com/spring-projects/spring-test-htmlunit'
+                developerConnection = 'scm:git:git://github.com/spring-projects/spring-test-htmlunit'
             }
             developers {
                 developer {
                     id = 'rwinch'
                     name = 'Rob Winch'
-                    email = 'rwinch@vmware.com'
+                    email = 'rwinch@pivotal.com'
                 }
             }
         }

@@ -148,6 +148,8 @@ configure(subprojects) { subproject ->
 configure(rootProject) {
   apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 
+  description = "Spring Test HtmlUnit"
+
   dependencies {
     testCompile project(':spring-test-htmlunit'),
             "org.springframework:spring-test:$springVersion",
