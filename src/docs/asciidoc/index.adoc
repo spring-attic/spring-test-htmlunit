@@ -718,3 +718,145 @@ Active contributors might be asked to join the core team, and given the ability 
 == License
 
 The Spring MVC Test HtmlUnit project is available under version 2.0 of the http://www.apache.org/licenses/LICENSE-2.0[Apache License].
+
+== Appendix
+
+=== Migrating from 1.0.0.M2 to 1.0.0.RC1
+
+Below is a summary of how to migrate between spring-test-htmlunit-1.0.0.M2 and spring-test-htmlunit-1.0.0.RC1.
+For a complete list of changes refer to the https://github.com/spring-projects/spring-test-htmlunit/issues?utf8=%E2%9C%93&q=is%3Aissue+milestone%3A1.0.0.RC1+[changelog].
+
+==== New Maven Coordinates
+
+We have changed the Group ID for the project.
+Refer to <<Updating Dependencies>> for details.
+
+==== MockMvc WebClient & WebDriver Builders
+
+This release adds builders for MockMvc and HtmlUnit integration.
+The builders provide a number of benefits:
+
+* Simplify the setup
+* Allow for more configuration options
+* By default any URL that has localhost is processed by MockMvc
+(i.e. http://localhost/something) while any other host is retrieved
+normally (i.e. http://cdn.example.com/jquery.js).
+
+===== Migrating to HtmlUnit Builders
+
+In the previous release HtmlUnit was initialized with the following
+code:
+
+[source,java]
+----
+MockMvc mockMvc = MockMvcBuilders
+    .webAppContextSetup(context)
+    .apply(springSecurity())
+    .build();
+webClient = new WebClient();
+webClient.setWebConnection(new MockMvcWebConnection(mockMvc));
+----
+
+While this method is still supported, you can simplify your setup using:
+
+[source, java]
+----
+webClient = MockMvcWebClientBuilder
+    .webAppContextSetup(context, springSecurity())
+    // contextPath defaults to ""
+    // previous releases use to be treated as null
+    .contextPath(null)
+    .createWebClient();
+----
+
+For additional details about `MockMvcWebClientBuilder` see <<Advanced MockMvcWebClientBuilder>>.
+
+===== Migrating to WebDriver Builders
+
+In the previous release WebDriver was initialized with the following code:
+
+[source,java]
+-----
+MockMvc mockMvc = MockMvcBuilders
+    .webAppContextSetup(context)
+    .apply(springSecurity())
+    .build();
+webDriver = new MockMvcHtmlUnitDriver(mockMvc, true);
+-----
+
+`MockMvcHtmlUnitDriver` was removed due to the fact that it was too complex and did not allow for more advanced configurations (i.e. context path).
+
+Now we can configure our webDriver using the following:
+
+[source,java]
+----
+webDriver = MockMvcHtmlUnitDriverBuilder
+    .webAppContextSetup(context, springSecurity())
+    // contextPath defaults to ""
+    // previous releases use to be treated as null
+    .contextPath(null)
+    .createDriver();
+----
+
+For additional details about `MockMvcHtmlUnitDriverBuilder` see <<Advanced MockMvcHtmlUnitDriverBuilder>>.
+
+===== Migrating to Geb Builders
+
+Geb use to be initialized with the following:
+
+[source,groovy]
+----
+MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
+browser.driver = new MockMvcHtmlUnitDriver(mockMvc, true)
+----
+
+`MockMvcHtmlUnitDriver` was removed due to the fact that it was too complex and did not allow for more advanced configurations (i.e. context path).
+
+Now we can configure Geb using the following:
+
+[source,groovy]
+----
+browser.driver = MockMvcHtmlUnitDriverBuilder
+    .webAppContextSetup(context, springSecurity())
+    .createDriver()
+----
+
+
+==== Default Context Path is now ""
+
+Based upon community feedback, the default context path is now "".
+This means if you are using a previous release, you will need to update the URL that is configured.
+For example:
+
+===== Migrating Context Path for HtmlUnit
+
+[source,java]
+----
+HtmlPage createMsgFormPage =  webClient.getPage("http://localhost/context-root/messages/form");
+
+// changes to...
+
+include::{samples-src-test-java}/sample/htmlunit/MockMvcHtmlUnitCreateMessageTests.java[tags=create-form,indent=0]
+----
+
+===== Migrating Context Path for WebDriver
+
+[source,java]
+----
+webDriver.get("http://localhost:9990/mail/messages/form");
+
+// changes to...
+
+webDriver.get("http://localhost:9990/messages/form");
+----
+
+===== Migrating Context Path for Geb
+
+[source,groovy]
+----
+baseUrl = 'http://localhost:8080/mail/'
+
+// changes to...
+
+baseUrl = 'http://localhost:8080/'
+----
