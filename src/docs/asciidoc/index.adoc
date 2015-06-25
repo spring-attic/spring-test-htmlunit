@@ -15,7 +15,7 @@ It does not work with JSPs since they rely on the Servlet Container.
 == Why Spring MVC Test HtmlUnit?
 
 The most obvious question that comes to mind is "Why do I need this?" The answer is best found by exploring a very basic https://github.com/spring-projects/spring-test-htmlunit/tree/master/mail-webapp[sample application].
-Assume you have a Spring MVC web application that allows CRUD operations on a https://github.com/spring-projects/spring-test-htmlunit/blob/master/mail-webapp/src/main/sample/data/Message.java[Message] object.
+Assume you have a Spring MVC web application that allows CRUD operations on a https://github.com/spring-projects/spring-test-htmlunit/blob/master/mail-webapp/src/main/java/sample/data/Message.java[Message] object.
 The application also allows paging through all messages.
 How would you go about testing it?
 
@@ -258,7 +258,7 @@ Now that we have the <<updating-dependencies,correct dependencies>>, we can use 
 Our example assumes you already have JUnit as a dependency.
 If you have not added it, please update your classpath accordingly.
 
-NOTE: The complete code sample for using HtmlUnit and Spring MVC Test can be found in https://github.com/spring-projects/spring-test-htmlunit/blob/master/mail-webapp/src/test/java/sample/htmlunit/MockMvcHtmlUnitCreateMessageTest.java[MockMvcHtmlUnitCreateMessageTest].
+NOTE: The complete code sample for using HtmlUnit and Spring MVC Test can be found in https://github.com/spring-projects/spring-test-htmlunit/blob/master/mail-webapp/src/test/java/sample/mockmvc/MockMvcCreateMessageTests.java[MockMvcCreateMessageTests].
 
 === HtmlUnit JUnit Spring Setup
 
@@ -335,7 +335,7 @@ This reduces the overhead significantly.
 Another important factor is that http://htmlunit.sourceforge.net/javascript.html[HtmlUnit uses Mozilla Rhino engine] to evaluate JavaScript on your pages.
 This means, that we can verify our JavaScript methods as well!
 
-For the complete example, please refer to https://github.com/spring-projects/spring-test-mvc-htmlunit/blob/master/mail-webapp/src/test/java/sample/htmlunit/MockMvcHtmlUnitCreateMessageTest.java[MockMvcHtmlUnitCreateMessageTest].
+For the complete example, please refer to https://github.com/spring-projects/spring-test-htmlunit/blob/master/mail-webapp/src/test/java/sample/mockmvc/MockMvcCreateMessageTests.java[MockMvcCreateMessageTests].
 Refer to the http://htmlunit.sourceforge.net/gettingStarted.html[HtmlUnit documentation] for additional information about using HtmlUnit.
 
 
@@ -706,7 +706,7 @@ The project should work with Spring 3.2.0+, but use with Spring 4.0 is encourage
 
 == Contributing
 
-Before contributing or logging an issue please be sure to the issue does not already exist in this project's https://github.com/SpringSource/spring-test-htmlunit/issues[issue tracking].
+Before contributing or logging an issue please be sure to the issue does not already exist in this project's https://github.com/spring-projects/spring-test-htmlunit/issues[issue tracking].
 If one does not exist, please create an issue.
 
 If you see anything you'd like to change we encourage taking advantage of github's social coding features by making the change in a http://help.github.com/forking/[fork of this repository] and sending a pull request.
