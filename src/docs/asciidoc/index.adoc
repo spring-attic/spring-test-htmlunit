@@ -4,7 +4,7 @@ Rob Winch
 This project's aim is to provide integration between http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-framework[Spring MVC Test Framework] and http://htmlunit.sourceforge.net/[HtmlUnit].
 This simplifies performing end to end testing when using HTML based views.
 Spring MVC Test HtmlUnit enables developers to:
-
+m
 * Easily test pages using tools (i.e. http://htmlunit.sourceforge.net/[HtmlUnit], http://seleniumhq.org/projects/webdriver/[WebDriver], & http://www.gebish.org/manual/current/testing.html#spock_junit__testng[Geb]) that we already use for integration testing without starting an application server
 * Support testing of JavaScript
 * Optionally test using mock services to speed up testing.
@@ -698,7 +698,7 @@ It does not work with JSPs since they rely on the Servlet Container.
 
 === Minimum JDK
 
-The miniumum JDK is 1.6 Not only has http://www.oracle.com/technetwork/java/eol-135779.html[Java 1.5 reached EOL], but this is necessary to keep up to date with dependencies since https://groups.google.com/forum/#!searchin/selenium-developers/java$206/selenium-developers/aB5NqZkJIpQ/VDZhrLuh7IIJ[Selenium requires JDK 1.6].
+The miniumum JDK is 1.7 in order to work with HtmlUnit and Selenium which also work with JDK 1.7.
 
 === Minimum Spring Version
 
