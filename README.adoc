@@ -22,7 +22,7 @@ MockMvc will work with templating technologies that do not rely on a Servlet Con
 
 === Minimum JDK
 
-The miniumum JDK is 1.6 Not only has http://www.oracle.com/technetwork/java/eol-135779.html[Java 1.5 reached EOL], but this is necessary to keep up to date with dependencies since https://groups.google.com/forum/#!searchin/selenium-developers/java$206/selenium-developers/aB5NqZkJIpQ/VDZhrLuh7IIJ[Selenium requires JDK 1.6].
+The miniumum JDK is 1.7 in order to work with HtmlUnit and Selenium which also work with JDK 1.7.
 
 === Minimum Spring Version
 
