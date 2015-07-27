@@ -1,41 +1,7 @@
 = Spring MVC Test HtmlUnit
 Rob Winch
 
-This project's aim is to provide integration between http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/testing.html#spring-mvc-test-framework[Spring MVC Test Framework] and http://htmlunit.sourceforge.net/[HtmlUnit]. This simplifies performing end to end testing when using HTML based views. Spring MVC Test HtmlUnit enables developers to:
+This project= Spring MVC Test HtmlUnit
+Rob Winch
 
-* Easily test pages using tools (i.e. http://htmlunit.sourceforge.net/[HtmlUnit], http://seleniumhq.org/projects/webdriver/[WebDriver], & http://www.gebish.org/manual/current/testing.html#spock_junit__testng[Geb]) that we already use for integration testing without starting an application server
-* Support testing of JavaScript
-* Optionally test using mock services to speed up testing.
-
-NOTE: MockMvc will work with templating technologies that do not rely on a Servlet Container (i.e. Thymeleaf, Freemarker, Velocity, etc). It does not work with JSPs since they rely on the Servlet Container.
-
-== Documentation
-
-You can find documentation at:
-
-* http://docs.spring.io/spring-test-htmlunit/docs/current-SNAPSHOT/reference/html5/[Current Snapshot]
-* http://docs.spring.io/spring-test-htmlunit/docs/current/reference/html5/[Current Stable]
-
-== Minimum Requirements
-
-MockMvc will work with templating technologies that do not rely on a Servlet Container (i.e. Thymeleaf, Freemarker, Velocity, etc). It does not work with JSPs since they rely on the Servlet Container.
-
-=== Minimum JDK
-
-The miniumum JDK is 1.7 in order to work with HtmlUnit and Selenium which also work with JDK 1.7.
-
-=== Minimum Spring Version
-
-The project should work with Spring 3.2.0+, but use with Spring 4.0 is encouraged.
-
-== Contributing
-
-Before contributing or logging an issue please be sure to the issue does not already exist in this project's https://github.com/SpringSource/spring-test-htmlunit/issues[issue tracking]. If one does not exist, please create an issue.
-
-If you see anything you'd like to change we encourage taking advantage of github's social coding features by making the change in a http://help.github.com/forking/[fork of this repository] and sending a pull request.
-
-Before we accept a non-trivial patch or pull request we will need you to sign the https://support.springsource.com/spring_committer_signup[contributor's agreement]. Signing the contributor's agreement does not grant anyone commit rights to the main repository, but it does mean that we can accept your contributions, and you will get an author credit if we do. Active contributors might be asked to join the core team, and given the ability to merge pull requests.
-
-== License
-
-The Spring MVC Test HtmlUnit project is available under version 2.0 of the http://www.apache.org/licenses/LICENSE-2.0[Apache License].
+This project has been merged http://docs.spring.io/spring/docs/4.2.0.BUILD-SNAPSHOT/spring-framework-reference/htmlsingle/#spring-mvc-test-server-htmlunit[into spring-test-4.2.0.RELEASE]. Please report issues at https://jira.spring.io/browse/SPR
