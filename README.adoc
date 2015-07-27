@@ -1,7 +1,4 @@
 = Spring MVC Test HtmlUnit
 Rob Winch
 
-This project= Spring MVC Test HtmlUnit
-Rob Winch
-
 This project has been merged http://docs.spring.io/spring/docs/4.2.0.BUILD-SNAPSHOT/spring-framework-reference/htmlsingle/#spring-mvc-test-server-htmlunit[into spring-test-4.2.0.RELEASE]. Please report issues at https://jira.spring.io/browse/SPR
