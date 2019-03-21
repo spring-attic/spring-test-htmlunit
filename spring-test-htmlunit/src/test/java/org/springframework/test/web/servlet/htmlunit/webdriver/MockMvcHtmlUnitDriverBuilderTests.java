@@ -75,7 +75,7 @@ public class MockMvcHtmlUnitDriverBuilderTests {
 				.configureDriver(new WebConnectionHtmlUnitDriver());
 
 		assertMvcProcessed("http://localhost/test");
-		assertDelegateProcessed("http://example.com/");
+		assertDelegateProcessed("https://example.com/");
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class MockMvcHtmlUnitDriverBuilderTests {
 				.createDriver();
 
 		assertMvcProcessed("http://localhost/test");
-		assertDelegateProcessed("http://example.com/");
+		assertDelegateProcessed("https://example.com/");
 	}
 
 	@Test
