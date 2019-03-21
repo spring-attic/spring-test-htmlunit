@@ -33,7 +33,7 @@ public class HostRequestMatcherTests {
 		boolean matches = matcher.matches(new WebRequest(new URL("http://localhost/jquery-1.11.0.min.js")));
 		assertThat(matches).isTrue();
 
-		matches = matcher.matches(new WebRequest(new URL("http://example.com/jquery-1.11.0.min.js")));
+		matches = matcher.matches(new WebRequest(new URL("https://example.com/jquery-1.11.0.min.js")));
 		assertThat(matches).isFalse();
 	}
 
@@ -44,7 +44,7 @@ public class HostRequestMatcherTests {
 		boolean matches = matcher.matches(new WebRequest(new URL("http://localhost/jquery-1.11.0.min.js")));
 		assertThat(matches).isTrue();
 
-		matches = matcher.matches(new WebRequest(new URL("http://example.com/jquery-1.11.0.min.js")));
+		matches = matcher.matches(new WebRequest(new URL("https://example.com/jquery-1.11.0.min.js")));
 		assertThat(matches).isTrue();
 	}
 

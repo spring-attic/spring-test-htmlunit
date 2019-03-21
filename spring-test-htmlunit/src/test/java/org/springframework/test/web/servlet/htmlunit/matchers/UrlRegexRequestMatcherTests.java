@@ -32,7 +32,7 @@ public class UrlRegexRequestMatcherTests {
 	public void classlevelJavadoc() throws Exception {
 		WebRequestMatcher cdnMatcher = new UrlRegexRequestMatcher(".*?//code.jquery.com/.*");
 
-		boolean matches = cdnMatcher.matches(new WebRequest(new URL("http://code.jquery.com/jquery-1.11.0.min.js")));
+		boolean matches = cdnMatcher.matches(new WebRequest(new URL("https://code.jquery.com/jquery-1.11.0.min.js")));
 		assertThat(matches).isTrue();
 
 		matches = cdnMatcher.matches(new WebRequest(new URL("http://localhost/jquery-1.11.0.min.js")));

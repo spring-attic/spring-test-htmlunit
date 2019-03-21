@@ -76,7 +76,7 @@ public class MockMvcWebClientBuilderTests {
 				.configureWebClient(webClient);
 
 		assertMvcProcessed("http://localhost/test");
-		assertDelegateProcessed("http://example.com/");
+		assertDelegateProcessed("https://example.com/");
 	}
 
 	@Test
@@ -86,7 +86,7 @@ public class MockMvcWebClientBuilderTests {
 				.createWebClient();
 
 		assertMvcProcessed("http://localhost/test");
-		assertDelegateProcessed("http://example.com/");
+		assertDelegateProcessed("https://example.com/");
 	}
 
 	private void assertMvcProcessed(String url) throws Exception {

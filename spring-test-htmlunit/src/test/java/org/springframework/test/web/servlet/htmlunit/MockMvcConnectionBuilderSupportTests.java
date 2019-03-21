@@ -67,13 +67,13 @@ public class MockMvcConnectionBuilderSupportTests {
 				.createConnection(delegateConnection);
 
 		assertMvcProcessed("http://localhost/");
-		assertDelegateProcessed("http://example.com/");
+		assertDelegateProcessed("https://example.com/");
 	}
 
 	@Test
 	public void mockMvc() throws Exception {
 		assertMvcProcessed("http://localhost/");
-		assertDelegateProcessed("http://example.com/");
+		assertDelegateProcessed("https://example.com/");
 	}
 
 	@Test
@@ -83,7 +83,7 @@ public class MockMvcConnectionBuilderSupportTests {
 				.createConnection(delegateConnection);
 
 		assertMvcProcessed("http://localhost/");
-		assertMvcProcessed("http://example.com/");
+		assertMvcProcessed("https://example.com/");
 		assertDelegateProcessed("http://other.com/");
 	}
 
