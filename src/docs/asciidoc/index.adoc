@@ -717,7 +717,7 @@ Active contributors might be asked to join the core team, and given the ability 
 
 == License
 
-The Spring MVC Test HtmlUnit project is available under version 2.0 of the http://www.apache.org/licenses/LICENSE-2.0[Apache License].
+The Spring MVC Test HtmlUnit project is available under version 2.0 of the https://www.apache.org/licenses/LICENSE-2.0[Apache License].
 
 == Appendix
 
