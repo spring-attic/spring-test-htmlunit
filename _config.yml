@@ -20,10 +20,10 @@ name: Spring Test HtmlUnit
 project: spring-test-htmlunit
 
 # Project github URL
-github_repo_url: http://github.com/spring-projects/spring-test-htmlunit
+github_repo_url: https://github.com/spring-projects/spring-test-htmlunit
 
 # Project forum URL
-#forum: http://forum.spring.io/forum/spring-projects/container
+#forum: https://forum.spring.io/forum/spring-projects/container
 
 # If you want to include a custom pom.xml or gradle template set these value to true and add _include files
 custom_pom_template: false
@@ -32,6 +32,6 @@ custom_gradle_template: false
 
 ### The following properties are constant for most projects
 
-main_site_url: http://spring.io
-projects_site_url: http://projects.spring.io
-questions_url: http://spring.io/questions
+main_site_url: https://spring.io
+projects_site_url: https://projects.spring.io
+questions_url: https://spring.io/questions
